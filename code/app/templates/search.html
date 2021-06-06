@@ -1,0 +1,13 @@
+<html>
+    <h1> Welcome to FraudBnB </h1>
+    <h2> a project by {{ authors }} </h2>
+    {{ description }}
+    <div>
+        <p>Input listing URL here: </p>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            {{ form.url}}
+            {{ form.submit }}
+        </form>
+    </div>
+</html>
