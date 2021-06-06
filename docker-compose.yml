@@ -1,6 +1,6 @@
 version: "3"
 services:
-  web:
+  fraudbnb:
     build:
       context: code
       dockerfile: Dockerfile
@@ -9,9 +9,9 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-#      - CHROMEDRIVER_PATH=/2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver
+      - CHROMEDRIVER_PATH=/2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver
 #      - FLASK_ENV=development
-    container_name: web
+    container_name: fraudbnb
     networks:
       - default
       - fraudbnb_network

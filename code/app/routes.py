@@ -25,11 +25,11 @@ def index():
         description='*project description goes here*')
         )
 
-#     return('<h1> Welcome to FraudBnB </h1>')
-    return (render_template('search.html', authors='Hashneet Kaur, \
-    Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-    Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-            description='*project description goes here*', form=url))
+    return('<h1> Welcome to FraudBnB </h1>')
+    #return (render_template('search.html', authors='Hashneet Kaur, \
+    #Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
+    #Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
+    #        description='*project description goes here*', form=url))
 
 
 @application.route('/search', methods=['POST', 'GET'])

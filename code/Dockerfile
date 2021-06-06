@@ -9,8 +9,9 @@ RUN apt-get update && apt-get install -y git
 # RUN apk add chromium-chromedriver
 # RUN apk add python3
 
-RUN git clone https://github.com/MSDS698/2021-product-analytics-group-project-group_8_fraud_bnb
-# COPY . /2021-product-analytics-group-project-group_8_fraud_bnb/code
+#RUN git clone https://github.com/MSDS698/2021-product-analytics-group-project-group_8_fraud_bnb
+
+COPY . /2021-product-analytics-group-project-group_8_fraud_bnb/code
 WORKDIR /2021-product-analytics-group-project-group_8_fraud_bnb/code
 
 RUN pip install --upgrade pip
