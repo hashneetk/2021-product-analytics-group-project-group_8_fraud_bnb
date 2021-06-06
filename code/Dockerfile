@@ -1,7 +1,8 @@
 FROM python:3.7-alpine
 RUN apk add git
 
-COPY . /2021-product-analytics-group-project-group_8_fraud_bnb/code
+RUN git clone https://github.com/MSDS698/2021-product-analytics-group-project-group_8_fraud_bnb
+# COPY . /2021-product-analytics-group-project-group_8_fraud_bnb/code
 WORKDIR /2021-product-analytics-group-project-group_8_fraud_bnb/code
 
 RUN pip install --upgrade pip
