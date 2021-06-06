@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import time
 import os
 
@@ -11,10 +12,15 @@ def get_driver():
     -------
     chrome driver
     '''
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
+    chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(options=chrome_options)
+    # options = webdriver.ChromeOptions()
+    # options.add_argument('headless')
 
-    return webdriver.Chrome(os.environ['CHROMEDRIVER_PATH'], options=options)
+    # return webdriver.Chrome(os.environ['CHROMEDRIVER_PATH'], options=options)
+    return driver
 
 def get_info(url, waiting_time=3, max_review=10):
     '''Return page info of the given page.
