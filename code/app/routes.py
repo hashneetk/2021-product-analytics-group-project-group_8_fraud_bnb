@@ -25,11 +25,17 @@ def index():
         description='*project description goes here*')
         )
 
-    return('<h1> Welcome to FraudBnB </h1>')
-    #return (render_template('search.html', authors='Hashneet Kaur, \
-    #Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-    #Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-    #        description='*project description goes here*', form=url))
+    # return('<h1> Welcome to FraudBnB </h1>')
+    return (render_template('search.html', authors='Hashneet Kaur, \
+    Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
+    Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
+           description='Vacation rental scams have been prevalent since well before the pandemic, '
+                       'so why haven’t rental websites such as Airbnb incorporated scam detection into their'
+                       ' products? A team member recently experienced this scenario - the 15 person family arrived at a beautiful '
+                       'Beverly Hills mansion after having paid a large sum of money, only to find out that the mansion, in fact, did not exist. '
+                       'While they got their money back, the situation could have been completely avoided with proper vetting, '
+                       'and the experience was left wanting. Our product will take into account several factors such as listing reviews, '
+                       'host reviews, analysis of pictures and address verification in order to establish trust and reliability for the consumer renting on Airbnb.', form=url))
 
 
 @application.route('/search', methods=['POST', 'GET'])
