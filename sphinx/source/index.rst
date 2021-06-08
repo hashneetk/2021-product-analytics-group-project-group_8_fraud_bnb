@@ -13,6 +13,10 @@ Welcome to fraud_bnb's documentation!
    tutorial
    code
 
+About
+-------------------------
+| We're current students at the University of San Francisco enrolled in the MSDS program.
+| This documentation is for our Product Analytics course in the Summer of 2021.
 
 
 Indices and tables
