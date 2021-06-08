@@ -10,6 +10,9 @@ Welcome to fraud_bnb's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   tutorial
+   code
+
 
 
 Indices and tables
