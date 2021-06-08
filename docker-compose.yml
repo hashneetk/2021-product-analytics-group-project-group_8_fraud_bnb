@@ -10,7 +10,6 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - CHROMEDRIVER_PATH=/2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver
-#      - FLASK_ENV=development
     container_name: fraudbnb
     networks:
       - default
