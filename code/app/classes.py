@@ -9,6 +9,7 @@ from app import db, login_manager
 
 
 class User(db.Model, UserMixin):
+    "Class for user table"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
@@ -27,6 +28,7 @@ class User(db.Model, UserMixin):
 
 
 class RegistrationForm(FlaskForm):
+    "Class for register form"
     username = StringField('Username:', validators=[DataRequired()])
     email = StringField('Email:', validators=[DataRequired()])
     password = PasswordField('Password:', validators=[DataRequired()])
@@ -34,6 +36,7 @@ class RegistrationForm(FlaskForm):
 
 
 class LogInForm(FlaskForm):
+    "Class for login form"
     username = StringField('Username:', validators=[DataRequired()])
     password = PasswordField('Password:', validators=[DataRequired()])
     submit = SubmitField('Login')
