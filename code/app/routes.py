@@ -71,6 +71,8 @@ def search():
 
 @application.route('/register', methods=('GET', 'POST'))
 def register():
+    """Register page: Renders register.html with sign up form asking for username, email, and password
+    """
     registration_form = classes.RegistrationForm()
     if registration_form.validate_on_submit():
         username = registration_form.username.data
@@ -92,6 +94,8 @@ def register():
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login page: Renders login.html with submit form for username and password
+    """
     login_form = classes.LogInForm()
     if login_form.validate_on_submit():
         username = login_form.username.data
@@ -109,6 +113,8 @@ def login():
 @application.route('/logout')
 @login_required
 def logout():
+    """Logout page: Unauthorized server error (expected)
+    """
     before_logout = '<h1> Before logout - is_autheticated : ' \
                     + str(current_user.is_authenticated) + '</h1>'
 
