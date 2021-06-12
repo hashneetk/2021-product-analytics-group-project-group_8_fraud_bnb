@@ -20,4 +20,9 @@ def test_db_existence():
 
 
 def test_UserFromDB():
-    pass
+    """
+        Assuming that "sandhyakiran, sandhyakiran337@gmail.com,
+        12345678" is always in the database
+        """
+    assert UserFromDB("sandhyakiran").email == "sandhyakiran337@gmail.com"
+    assert UserFromDB("sandhyakiran").username == "sandhyakiran"
