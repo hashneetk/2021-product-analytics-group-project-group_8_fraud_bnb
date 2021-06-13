@@ -1,37 +1,24 @@
 <html>
-    <h1> Welcome to FraudBnB </h1>
-    <h2> a project by {{ authors }} </h2>
-    {{ description }}
+<style>
+    th {
+        text-align: left;
+    }
+    td {
+        text-align: left;
+    }
+</style>
+    <h1> Thank you for your query, {{ username }}!</h1>
     <div>
-        <p> Your result: </p>
+        <h2> Your result: </h2>
         <table style="width:100%">
             <tr>
-                <td>Name of Listing</td>
-                <td>{{ list_name }}</td>
+                <th>Listing Id</td>
+                <td>{{ listing_id }}</td>
             </tr>
             <tr>
-                <td>Name of Host</td>
-                <td>{{ host_name }}</td>
+                <th>Reliability score</td>
+                <td>{{ score }}</td>
             </tr>
-            <tr>
-                <td>Rating</td>
-                <td>{{ rating }}</td>
-            </tr>
-        </table>
-        <p>Reviews of the listing: </p>
-        <table style="width:100%">
-            <tr>
-                <td> Posted By </td>
-                <td> Date </td>
-                <td> Review </td>
-            </tr>
-            {% for i in reviews %}
-                <tr>
-                    <td>{{ i[0] }}</td>
-                    <td>{{ i[1] }}</td>
-                    <td>{{ i[2] }}</td>
-                </tr>
-            {% endfor %}
         </table>
     </div>
 </html>

@@ -5,30 +5,15 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, TextField, validators
 
-from selen_scrap import get_info
 
-
-class URLFile(FlaskForm):
-    url = TextField('ListURL', [validators.required(), validators.URL()])
-    submit = SubmitField('Submit')
-
-
-@application.route('/', methods=['POST', 'GET'])
-@application.route('/about', methods=['POST', 'GET'])
+@application.route('/', methods=['GET'])
+@application.route('/about', methods=['GET'])
 def index():
     """Index page: Renders about.html with team member names and project
     description"""
-    url = URLFile()
-    if url.validate_on_submit():
-        return (render_template('about.html',
-                                authors='Hashneet Kaur, \
-        Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-        Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-                                description='*project description goes here*'))
 
-    # return('<h1> Welcome to FraudBnB </h1>')
     return (render_template(
-        'search.html',
+        'about.html',
         authors='Hashneet Kaur, \
     Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
     Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
@@ -40,32 +25,31 @@ def index():
         'While they got their money back, the situation could have been completely avoided with proper vetting, '
         'and the experience was left wanting. Our product will take into account several factors such as listing reviews, '
         'host reviews, analysis of pictures and address verification in order to establish trust and reliability for the consumer renting on Airbnb.',
-        form=url))
+        ))
 
 
-@application.route('/search', methods=['POST', 'GET'])
-def search():
-    url = URLFile()
-    if url.validate_on_submit():
-        page_info = get_info(url.url.data)
+@application.route('/search/<username>', methods=['POST', 'GET'])
+@login_required
+def search(username):
+    listing_id_form = classes.ListIdForm()
+    if listing_id_form.validate_on_submit():
+        listing_id = listing_id_form.listing_id.data
+        score = classes.Listings.query \
+                .filter_by(listing_id=int(listing_id)).first().listing_reliability
+
+        if not score:
+            score = 'Sorry, score not found.'
 
         return render_template('search_result.html',
-                               authors='Hashneet Kaur, \
-            Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-            Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-                               description='*:)*',
-                               list_name=page_info['listing_name'],
-                               host_name=page_info['host_name'],
-                               reviews=page_info['reviews'],
-                               rating=page_info['rating'])
+                               listing_id=listing_id,
+                               username=username,
+                               score=score,
+                            )
 
     return render_template(
         'search.html',
-        authors='Hashneet Kaur, \
-        Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-        Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-        description='*:)*',
-        form=url,
+        username=username,
+        form=listing_id_form,
     )
 
 
@@ -105,7 +89,7 @@ def login():
 
         if user is not None and user.check_password(password):
             login_user(user)
-            return ("<h1> Welcome {}!</h1>".format(username))
+            return redirect(url_for('search', username=username))
 
     return render_template('login.html', form=login_form)
 

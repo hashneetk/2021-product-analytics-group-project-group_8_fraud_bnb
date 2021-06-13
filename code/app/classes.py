@@ -27,6 +27,26 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
+class Listings(db.Model):
+    "Class for listings table"
+    listing_id = db.Column(db.Integer)
+    review_id = db.Column(db.Integer, primary_key=True)
+    review_date = db.Column(db.DateTime)
+    reviewer_id = db.Column(db.Integer)
+    reviewer_name = db.Column(db.String())
+    scores = db.Column(db.Float)
+    cancel_flag = db.Column(db.Float)
+    num_words = db.Column(db.Float)
+    sentiment_score = db.Column(db.Float)
+    num_reviews = db.Column(db.Integer)
+    similarity = db.Column(db.Float)
+    perc_scores = db.Column(db.Float)
+    perc_flag = db.Column(db.Float)
+    perc_sentiment_score = db.Column(db.Float)
+    review_reliability = db.Column(db.Float)
+    listing_reliability = db.Column(db.Float)
+
+
 class RegistrationForm(FlaskForm):
     "Class for register form"
     username = StringField('Username:', validators=[DataRequired()])
@@ -40,6 +60,10 @@ class LogInForm(FlaskForm):
     username = StringField('Username:', validators=[DataRequired()])
     password = PasswordField('Password:', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+
+class ListIdForm(FlaskForm):
+    listing_id = StringField('ListURL', validators=[DataRequired()])
 
 
 @login_manager.user_loader
