@@ -64,7 +64,7 @@ class LogInForm(FlaskForm):
 
 class ListIdForm(FlaskForm):
     listing_id = StringField('ListURL', validators=[DataRequired()])
-
+    submit = SubmitField('Submit')
 
 @login_manager.user_loader
 def load_user(id):
