@@ -10,11 +10,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN apt-get install -y wget
-RUN apt-get install -y unzip
-
-RUN wget -O /2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver.zip https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip
-RUN unzip /2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver.zip chromedriver -d /2021-product-analytics-group-project-group_8_fraud_bnb/code/
-RUN chmod +x /2021-product-analytics-group-project-group_8_fraud_bnb/code/chromedriver
 
 EXPOSE 80
 CMD flask run --host=0.0.0.0 --port=80
