@@ -17,7 +17,7 @@ def get_driver():
     driver = webdriver.Chrome(os.environ['CHROMEDRIVER_PATH'],
                               options=chrome_options)
     # options = webdriver.ChromeOptions()
-    # options.add_argument('headless')
+    # options.add_argument('headless'
 
     # return webdriver.Chrome(os.environ['CHROMEDRIVER_PATH'], options=options)
     return driver
