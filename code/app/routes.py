@@ -38,8 +38,7 @@ def search(username):
     listing_id_form = classes.ListIdForm()
     if listing_id_form.validate_on_submit():
         listing_id = listing_id_form.listing_id.data
-        score = classes.Listings.query
-        .filter_by(listing_id=int(listing_id)).first().listing_reliability
+        score = classes.Listings.query.filter_by(listing_id=int(listing_id)).first().listing_reliability
 
         if not score:
             score = 'Sorry, score not found.'
