@@ -2,7 +2,8 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
+from app import classes
+from app import routes
 
 application = Flask(__name__)
 application.config.from_object(Config)
@@ -13,7 +14,3 @@ db.session.commit()
 
 login_manager = LoginManager()
 login_manager.init_app(application)
-
-
-from app import classes
-from app import routes
