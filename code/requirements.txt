@@ -6,6 +6,7 @@ bcrypt==3.2.0
 blessed==1.18.0
 boto3==1.17.71
 botocore==1.20.71
+branca==0.4.2
 cached-property==1.5.2
 cement==2.8.2
 certifi==2021.5.30
@@ -14,6 +15,7 @@ chardet==4.0.0
 click==8.0.1
 colorama==0.4.3
 cryptography==3.4.7
+cycler==0.10.0
 docker==4.4.4
 docker-compose==1.25.5
 dockerpty==0.4.1
@@ -24,6 +26,7 @@ Flask==2.0.1
 Flask-Login==0.5.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
+folium==0.12.1
 future==0.16.0
 greenlet==1.1.0
 idna==2.10
@@ -34,10 +37,14 @@ itsdangerous==2.0.1
 Jinja2==3.0.1
 jmespath==0.10.0
 jsonschema==3.2.0
+kiwisolver==1.3.1
 MarkupSafe==2.0.1
+matplotlib==3.4.2
+numpy==1.20.3
 packaging==20.9
 paramiko==2.7.2
 pathspec==0.5.9
+Pillow==8.2.0
 pluggy==0.13.1
 psycopg2==2.8.6
 py==1.10.0

@@ -5,6 +5,10 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, TextField, validators
 
+import folium
+
+from create_map import map_html
+
 
 @application.route('/', methods=['GET'])
 @application.route('/about', methods=['GET'])
@@ -112,3 +116,13 @@ def logout():
     after_logout = '<h1> After logout - is_autheticated : ' \
                    + str(current_user.is_authenticated) + '</h1>'
     return before_logout + after_logout
+
+
+@application.route('/reliability-map')
+def display_1000_listing():
+    return map_html(1000)
+
+
+@application.route('/reliability-map/<max_listing>')
+def display_n_listing(max_listing):
+    return map_html(max_listing)
