@@ -45,6 +45,8 @@ class Listings(db.Model):
     perc_sentiment_score = db.Column(db.Float)
     review_reliability = db.Column(db.Float)
     listing_reliability = db.Column(db.Float)
+    latitude = db.Column(db.Float)
+    longtitude = db.Column(db.Float)
 
 
 class RegistrationForm(FlaskForm):
