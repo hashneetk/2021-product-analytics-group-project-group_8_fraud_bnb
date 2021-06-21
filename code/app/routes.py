@@ -11,29 +11,12 @@ from create_map import map_html
 
 
 @application.route('/', methods=['GET'])
+@application.route('/index', methods=['GET'])
 @application.route('/about', methods=['GET'])
 def index():
     """Index page: Renders about.html with team member names and project
     description"""
-
-    return (render_template(
-        'about.html',
-        authors='Hashneet Kaur, \
-    Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-    Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-        description='Vacation rental scams have been prevalent since well \
-        before the pandemic, so why haven’t rental websites such as Airbnb \
-        incorporated scam detection into their products? A team member \
-        recently experienced this scenario - the 15 person family arrived \
-        at a beautiful Beverly Hills mansion after having paid a large sum \
-        of money, only to find out that the mansion, in fact, did not exist. \
-        While they got their money back, the situation could have been \
-        completely avoided with proper vetting, and the experience was left \
-        wanting. Our product will take into account several factors such as \
-        listing reviews, host reviews, analysis of pictures and address \
-        verification in order to establish trust and reliability for the \
-        consumer renting on Airbnb.',
-        ))
+    return render_template('index.html', authenticated_user=current_user.is_authenticated)
 
 
 @application.route('/search/<username>', methods=['POST', 'GET'])
@@ -80,7 +63,7 @@ def register():
             user = classes.User(username, email, password)
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
     return render_template('register.html', form=registration_form)
 
 
@@ -98,7 +81,7 @@ def login():
 
         if user is not None and user.check_password(password):
             login_user(user)
-            return redirect(url_for('search', username=username))
+            return redirect(url_for('index'))
 
     return render_template('login.html', form=login_form)
 
@@ -108,21 +91,26 @@ def login():
 def logout():
     """Logout page: Unauthorized server error (expected)
     """
-    before_logout = '<h1> Before logout - is_autheticated : ' \
-                    + str(current_user.is_authenticated) + '</h1>'
-
     logout_user()
-
-    after_logout = '<h1> After logout - is_autheticated : ' \
-                   + str(current_user.is_authenticated) + '</h1>'
-    return before_logout + after_logout
+    return redirect(url_for('index'))
 
 
 @application.route('/reliability-map')
+@login_required
 def display_1000_listing():
     return map_html(1000)
 
 
 @application.route('/reliability-map/<max_listing>')
+@login_required
 def display_n_listing(max_listing):
     return map_html(max_listing)
+
+@application.route('/dashboard')
+@login_required
+def fake_dashboard():
+    return render_template(
+        'dashboard.html',
+        authenticated_user=current_user.is_authenticated,
+        not_at_index=True,
+    )
