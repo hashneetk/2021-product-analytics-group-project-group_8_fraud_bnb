@@ -19,30 +19,6 @@ def index():
     return render_template('index.html', authenticated_user=current_user.is_authenticated)
 
 
-@application.route('/search/<username>', methods=['POST', 'GET'])
-@login_required
-def search(username):
-    listing_id_form = classes.ListIdForm()
-    if listing_id_form.validate_on_submit():
-        listing_id = listing_id_form.listing_id.data
-        score = classes.Listings.query.filter_by(listing_id=int(listing_id)).first().listing_reliability
-
-        if not score:
-            score = 'Sorry, score not found.'
-
-        return render_template('search_result.html',
-                               listing_id=listing_id,
-                               username=username,
-                               score=score,
-                               )
-
-    return render_template(
-        'search.html',
-        username=username,
-        form=listing_id_form,
-    )
-
-
 @application.route('/register', methods=('GET', 'POST'))
 def register():
     """Register page: Renders register.html with sign up
@@ -93,12 +69,6 @@ def logout():
     """
     logout_user()
     return redirect(url_for('index'))
-
-
-@application.route('/reliability-map')
-@login_required
-def display_1000_listing():
-    return map_html(1000)
 
 
 @application.route('/reliability-map/<max_listing>')

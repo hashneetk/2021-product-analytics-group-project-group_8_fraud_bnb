@@ -12,9 +12,9 @@
           <div class="container">
 
             <div class="d-flex justify-content-between align-items-center">
-              <h2>Login Page</h2>
+              <h2>Login To Access Your Tools!</h2>
               <ol>
-                <li><a href="index.html">Home</a></li>
+                <!-- <li><a href="index.html">Home</a></li> -->
                 <li>Login Page</li>
               </ol>
             </div>
@@ -28,10 +28,12 @@
             <div class="container">
                 <form method="POST">
                     {{ form.csrf_token }}
-                    {{ form.username.label}} {{form.username()}} <br/>
-                    {{ form.password.label}} {{form.password()}}<br/>
+                    {{ form.username.label}} <br/>
+                    {{form.username()}} <br/>
+                    {{ form.password.label}} <br/>
+                    {{form.password()}}<br/>
+                    <br/>
                     {{ form.submit()}}
-
                 </form>
             </br>
             </div> <!-- /container -->
