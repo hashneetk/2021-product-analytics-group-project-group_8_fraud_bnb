@@ -1,16 +1,46 @@
-<html>
-<div class="container">
+<!DOCTYPE html>
+<html lang="en">
 
-    <form method="POST"> <!-- post : handle submission -->
-        <h2>Sign Up </h2>
-        {{ form.csrf_token }}
-        {{ form.username.label}} {{form.username()}} <br/>
-        {{ form.email.label}} {{form.email()}}<br/>
-        {{ form.password.label}} {{form.password()}}<br/>
-        {{ form.submit()}}
+{% include "header.html" %}
 
-    </form>
-    <br/>
+<body>
+    {% include "navbar.html" %}
+    <main id="main">
 
-</div> <!-- /container -->
+        <!-- ======= Breadcrumbs Section ======= -->
+        <section class="breadcrumbs">
+          <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+              <h2>Register To Get Started!</h2>
+              <ol>
+                <li><a href="index.html">Home</a></li>
+                <li>Registration Page</li>
+              </ol>
+            </div>
+
+          </div>
+        </section><!-- End Breadcrumbs Section -->
+
+
+        <section class="inner-page">
+
+            <div class="container">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    {{ form.username.label}} {{form.username()}} <br/>
+                    {{ form.email.label}} {{form.email()}}<br/>
+                    {{ form.password.label}} {{form.password()}}<br/>
+                    {{ form.submit()}}
+                </form>
+            </br>
+            </div> <!-- /container -->
+        </section>
+
+      </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+</body>
 </html>
+
