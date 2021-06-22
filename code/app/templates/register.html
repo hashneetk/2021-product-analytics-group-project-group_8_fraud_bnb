@@ -34,7 +34,7 @@
                     {{form.email()}}<br/>
                     {{ form.password.label}} <br/>
                     {{form.password()}}<br/>
-                    <br/>
+                    <p style="color:red;">{{ error_msg}}</p>
                     {{ form.submit()}}
                 </form>
             </br>
