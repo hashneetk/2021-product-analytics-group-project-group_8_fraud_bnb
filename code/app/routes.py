@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, TextField, validators
+from flask_bootstrap import Bootstrap
 
 
 @application.route('/', methods=['GET'])
@@ -112,3 +113,18 @@ def logout():
     after_logout = '<h1> After logout - is_autheticated : ' \
                    + str(current_user.is_authenticated) + '</h1>'
     return before_logout + after_logout
+
+
+
+@application.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+    """Login page: Renders login.html with submit
+    form for username and password
+    """
+    data = {'positive': 80, 'neutral': 10,'negative':10}
+    column = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
+    donut = [['Positive',50],['Neutral',30],['Negative',20]]
+    bar = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
+    listing_line = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
+
+    return render_template('index.html',var_1='$100,000',data=data, column = column, val = donut, bar = bar, listing_line = listing_line)

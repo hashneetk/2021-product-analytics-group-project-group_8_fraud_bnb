@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>FraudBnB - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+
+
+    <!-- Custom styles for this template-->
+    <link href="static/css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css'><link href="static/css/sb-admin-2.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+</head>
+
+<body id="page-top">
+<div class="bg"></div>
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                            placeholder="Search for..." aria-label="Search"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 12, 2020</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">November 30, 2020</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">November 18, 2020</div>
+                                        Alert: Suspicious reviewer detected
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <img class="img-profile rounded-circle"
+                                    src="static/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    </div>
+
+                  <!--   My addition -->
+
+
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card card-flip bg-success h-100 py-2">
+                                 <div class ="card-front text-white">
+                                <div class="card-body text-white">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                             <h2 class="h6 font-weight-bold text-center mb-4">Overall Reliability</h2>
+                                            <div class="progress" data-percentage="80">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <div class="progress-value w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    <div>
+                                                        80%<br></br>
+                                                        <span>Reliability</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                 </div>
+                                <div class="card-back bg-dark">
+                    <div class="card-body">
+                        <h3 class="card-title">What is Overall Reliability?</h3>
+                        <p class="card-text">This metric is the average of Host,Review and Raters Reliability.</p>
+
+                    </div>
+                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card card-flip bg-warning h-100 py-2">
+                                <div class ="card-front text-white">
+                                <div class="card-body text-white">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <h2 class="h6 font-weight-bold text-center mb-4">Reviews Reliability</h2>
+                                            <div class="progress" data-percentage="60">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar border-danger"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar border-danger"></span>
+                                                </span>
+                                                <div class="progress-value w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    <div>
+                                                        60%<br></br>
+                                                        <span>Reliability</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="card-back bg-dark">
+                    <div class="card-body">
+                        <h3 class="card-title">What is Reviews Reliability?</h3>
+                        <p class="card-text">This metric measures whether the listing is reliable according to reviews.
+                            It uses sentiment classification score and looks for words terms such as Host cancellation<p>
+
+                    </div>
+                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card card-flip bg-info h-100 py-2">
+                                <div class ="card-front text-white">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <h2 class="h6 font-weight-bold text-center mb-4">Raters Reliability</h2>
+                                            <div class="progress" data-percentage="30">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar progress-bar-striped progress-bar-animated border-primary"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar progress-bar-striped progress-bar-animated border-primary"></span>
+                                                </span>
+                                                <div class="progress-value w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    <div>
+                                                        30%<br></br>
+                                                        <span>Reliability</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                </div>
+                                 <div class="card-back bg-dark">
+                    <div class="card-body">
+                        <h3 class="card-title">What is Raters Reliability?</h3>
+                        <p class="card-text">This metric measures whether the raters who left reviews on the listing are reliable or not.
+                        Sometimes fake reviewers may try to boost ratings of a fraud listing. We look at review similarity, frequency of reviews
+                            left by the reviewer and time difference between the reviews.
+                        </p>
+
+                    </div>
+                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- Pending Requests Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card card-flip bg-primary  h-100 py-2">
+                                <div class ="card-front text-white">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <h2 class="h6 font-weight-bold text-center mb-4"> Hosts Reliability</h2>
+                                             <div class="progress text-white" data-percentage="20">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar progress-bar-striped progress-bar-animated border-success"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar progress-bar-striped progress-bar-animated border-success"></span>
+                                                </span>
+                                                <div class="progress-value w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    <div>
+                                                        20%<br></br>
+                                                        <span>Reliability</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="card-back bg-dark">
+                    <div class="card-body">
+                        <h3 class="card-title">What is Host Reliability?</h3>
+                        <p class="card-text">This metric measures whether the host is reliable or not based on listing availability, listing price and host cancellations</p>
+
+                    </div>
+                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+
+                    <div class="row">
+
+                        <!-- Column Chart -->
+                        <div class="col-xl-6 col-md-5 mb-4">
+
+                        <div class="card  mb-3" style="max-width: 55rem;height: 20rem">
+                            <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
+                                <h6 class="m-0 font-weight-bold text-white">Average Reviews Score</h6>
+
+                            </div>
+                            <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                            <div id="column_chart">
+                            </div>
+                            </div>
+
+
+                        </div>
+                        </div>
+                        </div>
+
+                        <!--- Small cards---->
+                        <div class="col">
+                            <div class="card special-card text-white bg-danger mb-3" style="max-width: 18rem;height: 9.5rem">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Number of Fraud Reviewers</h5>
+                            <h4 class="card-text text-center ">1</h4>
+                        </div>
+                        </div>
+                            <div class="card special-card text-white bg-info mb-3" style="max-width: 18rem;height: 9.5rem">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Number of Host Cancellations</h5>
+                            <h4 class="card-text text-center ">2</h4>
+                        </div>
+                        </div>
+
+                        </div>
+
+
+
+                        <!-- Pie Chart -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
+                                    <h6 class="m-0 font-weight-bold text-white">Review Sentiment Distribution</h6>
+
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="container">
+                                        <canvas id="myChart" height="225" style="width:100%;max-width:700px"></canvas>
+                                        <script>
+                                        var xValues = ["Postive","Neutral","Negative"];
+                                        var yValues = [30,40,30];
+                                        var barColors = [
+                                        "#6AD5CB",
+                                           "#ffba08",
+                                          "#ff6361"
+
+                                        ];
+
+                                        new Chart("myChart", {
+                                          type: "doughnut",
+                                          data: {
+                                            labels: xValues,
+                                            datasets: [{
+                                              backgroundColor: barColors,
+                                              data: yValues
+                                            }]
+                                          },
+                                          options: {
+                                            title: {
+                                              display: false
+                                            },
+                                              animation: {
+                                                animateRotate:true,
+                                                  animateScale:true
+                                              }
+                                          }
+                                        });
+                                        </script>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="row">
+                    <!-- Line Chart -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
+                                    <h6 class="m-0 font-weight-bold text-white">Monthly Rating of Host</h6>
+
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div id="listing_line_chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- Vertical Bar Chart -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
+                                    <h6 class="m-0 font-weight-bold text-white">Availability of Listing</h6>
+
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div id="barchart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                    </div>
+
+                </div>
+
+                <!-- /.container-fluid -->
+
+            </div>
+
+
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; FraudBnB 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="static/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="static/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="static/js/demo/chart-area-demo.js"></script>
+    <script src="static/js/demo/chart-pie-demo.js">
+
+    </script>
+
+<!-- Script for Column Chart -->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', 'Average Review Score');
+
+        var column_json = '{{ column | tojson }}';
+        data.addRows(JSON.parse(column_json));
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" }
+                       ]);
+
+      var options = {
+
+        animation: {
+          duration: 1000,
+          easing: 'linear',
+          startup: true
+        },
+        width: 700,
+        height: 220,
+        bar: {groupWidth: "65%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("column_chart"));
+      chart.draw(view, options);
+  }
+  </script>
+
+<!-- Script for Pie Chart -->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Label');
+        data.addColumn('number', 'Number of Reviews');
+
+        var donut_json = '{{ val | tojson }}';
+        data.addRows(JSON.parse(donut_json));
+
+        var options = {
+
+          pieHole: 0.4,
+          pieSliceTextStyle: {
+            color: 'black',
+          },
+          width: 450,
+          height: 320
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+
+ <!-- Script for Vertical Bar Chart -->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Availability of Listing');
+
+      var bar_json = '{{ bar | tojson }}';
+      data.addRows(JSON.parse(bar_json));
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" }
+                       ]);
+
+      var options = {
+
+        animation: {
+          duration: 1000,
+          easing: 'linear',
+          startup: true
+        },
+        width: 450,
+        height: 320,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("barchart"));
+      chart.draw(view, options);
+  }
+  </script>
+
+<!-- Script for Line Chart -->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Year');
+    data.addColumn('number', 'Rating of Listing');
+
+    var listing_line_json = '{{ listing_line | tojson }}';
+    data.addRows(JSON.parse(listing_line_json));
+
+
+    var options = {
+    chart: {
+      title: 'Monthly Rating of Host',
+      subtitle: 'By Month'
+    },
+    animation: {
+          duration: 1000,
+          easing: 'linear',
+          startup: true
+        },
+    width: 900,
+    height: 320
+  };
+
+    var chart = new google.visualization.LineChart(document.getElementById('listing_line_chart'));
+
+    chart.draw(data, options);
+  }
+</script>
+
+
+</body>
+
+</html>
