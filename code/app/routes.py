@@ -93,3 +93,12 @@ def fake_dashboard():
         authenticated_user=current_user.is_authenticated,
         not_at_index=True,
     )
+
+@application.route('/analysis-reports')
+@login_required
+def analysis_reports():
+    return render_template(
+        'analysis-reports.html',
+        authenticated_user=current_user.is_authenticated,
+        not_at_index=True,
+    )
