@@ -121,10 +121,18 @@ def dashboard():
     """Login page: Renders login.html with submit
     form for username and password
     """
-    data = {'positive': 80, 'neutral': 10,'negative':10}
-    column = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
-    donut = [['Positive',50],['Neutral',30],['Negative',20]]
-    bar = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
-    listing_line = [['10-2020',3],['11-2020',4],['12-2020',5],['01-2021',8]]
+    dates = ['202002','202003','202004','202005']
+    sentiments = ["Postive","Neutral","Negative"]
+    sentiment_values = [30, 40, 30]
+    listing_availability = [55, 49, 44, 24, 15]
+    avg_review_sentiment_scores = [95, 87, 44, 94, 95]
+    avg_rating_scores = [5, 4, 4, 3]
 
-    return render_template('index.html',var_1='$100,000',data=data, column = column, val = donut, bar = bar, listing_line = listing_line)
+
+
+
+    return render_template('index.html',dates=dates,sentiments=sentiments
+                                        ,sentiment_values=sentiment_values
+                                        ,listing_availability=listing_availability
+                                        ,avg_review_sentiment_scores=avg_review_sentiment_scores
+                                        ,avg_rating_scores=avg_rating_scores)

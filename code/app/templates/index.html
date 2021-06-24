@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css'><link href="static/css/sb-admin-2.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 
 </head>
 
@@ -356,22 +357,56 @@
                         <!-- Column Chart -->
                         <div class="col-xl-6 col-md-5 mb-4">
 
-                        <div class="card  mb-3" style="max-width: 55rem;height: 20rem">
+                        <div class="card text-center mb-3" style="max-width: 55rem;height: 20rem">
                             <!-- Card Header - Dropdown -->
                         <div
                             class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
-                                <h6 class="m-0 font-weight-bold text-white">Average Reviews Score</h6>
+                                <h6 class="m-0 font-weight-bold text-white">Average Review Sentiment Score</h6>
 
                             </div>
                             <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                            <div id="column_chart">
+                        <div class="card-body align-items-center">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="container">
+                          
+                            <canvas id="ReviewsChart" style="width:100%;max-width:700px;max-height:250px"></canvas>
+
+                            <script>
+                            var xValues = {{dates|tojson|safe}};
+                            var yValues =  {{avg_review_sentiment_scores|tojson|safe}};
+                            var barColors = [  'rgba(51, 153, 235, 0.6)','rgba(51, 153, 235, 0.6)','rgba(51, 153, 235, 0.6)','rgba(51, 153, 235, 0.6)'];
+                            var bordercolors = [  'rgb(51, 153, 235)','rgb(51, 153, 235)','rgb(51, 153, 235)','rgb(51, 153, 235)'];
+
+
+                            new Chart("ReviewsChart", { 
+                            type: "bar",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                backgroundColor: barColors,
+                                borderColor:bordercolors,
+                                borderWidth:2,
+                                data: yValues
+                                }]
+                            },
+                            options: {
+                                legend: {display: false},
+                                title: {
+                                display: false
+                                
+                                },
+                                indexAxis: 'x',
+                                responsive: true
+                            }
+                            });
+                            </script>
+                            </div>
+                            </div>
                             </div>
                             </div>
 
 
-                        </div>
                         </div>
                         </div>
 
@@ -407,11 +442,11 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="container">
+                                    <div class="container-fluid">
                                         <canvas id="myChart" height="225" style="width:100%;max-width:700px"></canvas>
                                         <script>
-                                        var xValues = ["Postive","Neutral","Negative"];
-                                        var yValues = [30,40,30];
+                                        var xValues = {{sentiments|tojson|safe}};
+                                        var yValues =  {{sentiment_values|tojson|safe}};
                                         var barColors = [
                                         "#6AD5CB",
                                            "#ffba08",
@@ -447,7 +482,7 @@
                     </div>
                 <div class="row">
                     <!-- Line Chart -->
-                        <div class="col-xl-8 col-lg-7">
+                        <div class="col-xl-6 col-lg-7">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div
@@ -457,15 +492,43 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="container">
-                                        <div id="listing_line_chart"></div>
+                                    <div class="container-fluid">
+                                        <canvas id="monthly_rating_chart" style="width:100%;max-width:900px;max-height: 300px;"></canvas>
+
+                                            <script>
+                                            var xValues ={{dates|tojson|safe}};
+                                            var yValues = {{avg_rating_scores|tojson|safe}};
+
+                                            new Chart("monthly_rating_chart", {
+                                            type: "line",
+                                            data: {
+                                                labels: xValues,
+                                                datasets: [{
+                                                fill: false,
+                                                lineTension: 0,
+                                                backgroundColor: "rgba(129, 178, 154,1.0)",
+                                                borderColor: "rgba(129, 178, 154 ,0.3)",
+                                                borderWidth: 4,
+                                                data: yValues
+                                                }]
+                                            },
+                                            options: {
+                                                legend: {display: false},
+                                title: {
+                                display: false
+                                
+                                }
+                                            }
+                                            });
+                                            </script>
+                                                                                
                                     </div>
                                 </div>
                             </div>
                         </div>
                     <!-- Vertical Bar Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
+                        <div class="col-xl-6 col-lg-7">
+                            <div class="card shadow mb-4" style="max-height:60 rem">
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #00AA9E;">
@@ -473,9 +536,39 @@
 
                                 </div>
                                 <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="container">
-                                        <div id="barchart"></div>
+                                <div class="card-body align-items-center">
+                                    <div class="container-fluid">
+                                        <canvas id="ListingChart" style="width:120%;max-width:600px;max-height:250px"></canvas>
+
+                            <script>
+                            var xValues = ['202002','202003','202004','202005'];
+                            var yValues = [55, 49, 44, 24, 15];
+                            var barColors = [  'rgba(230, 57, 70, 0.6)','rgba(230, 57, 70, 0.6)','rgba(230, 57, 70, 0.6)','rgba(5230, 57, 70, 0.6)'];
+                            var bordercolors = ['rgb(230, 57, 70)','rgb(230, 57, 70)','rgb(230, 57, 70)','rgb(230, 57, 70)']
+
+                            new Chart("ListingChart", {
+                            type: 'horizontalBar',
+                            data: {
+                                axis: 'y',
+                                labels: xValues,
+                                datasets: [{
+                                backgroundColor: barColors,
+                                borderColor:bordercolors,
+                                borderWidth:2,
+                                data: yValues
+                                }]
+                            },
+                            options: {
+                                legend: {display: false},
+                                title: {
+                                display: false
+                                
+                                },
+                                indexAxis: 'y'
+                            }
+                            });
+                            </script>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -549,154 +642,7 @@
 
     <!-- Page level custom scripts -->
     <script src="static/js/demo/chart-area-demo.js"></script>
-    <script src="static/js/demo/chart-pie-demo.js">
-
-    </script>
-
-<!-- Script for Column Chart -->
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load("current", {packages:['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Year');
-        data.addColumn('number', 'Average Review Score');
-
-        var column_json = '{{ column | tojson }}';
-        data.addRows(JSON.parse(column_json));
-
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" }
-                       ]);
-
-      var options = {
-
-        animation: {
-          duration: 1000,
-          easing: 'linear',
-          startup: true
-        },
-        width: 700,
-        height: 220,
-        bar: {groupWidth: "65%"},
-        legend: { position: "none" },
-      };
-      var chart = new google.visualization.ColumnChart(document.getElementById("column_chart"));
-      chart.draw(view, options);
-  }
-  </script>
-
-<!-- Script for Pie Chart -->
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Label');
-        data.addColumn('number', 'Number of Reviews');
-
-        var donut_json = '{{ val | tojson }}';
-        data.addRows(JSON.parse(donut_json));
-
-        var options = {
-
-          pieHole: 0.4,
-          pieSliceTextStyle: {
-            color: 'black',
-          },
-          width: 450,
-          height: 320
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        chart.draw(data, options);
-      }
-    </script>
-
- <!-- Script for Vertical Bar Chart -->
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-    google.charts.load("current", {packages:["corechart"]});
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Year');
-      data.addColumn('number', 'Availability of Listing');
-
-      var bar_json = '{{ bar | tojson }}';
-      data.addRows(JSON.parse(bar_json));
-
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" }
-                       ]);
-
-      var options = {
-
-        animation: {
-          duration: 1000,
-          easing: 'linear',
-          startup: true
-        },
-        width: 450,
-        height: 320,
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      };
-      var chart = new google.visualization.BarChart(document.getElementById("barchart"));
-      chart.draw(view, options);
-  }
-  </script>
-
-<!-- Script for Line Chart -->
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Year');
-    data.addColumn('number', 'Rating of Listing');
-
-    var listing_line_json = '{{ listing_line | tojson }}';
-    data.addRows(JSON.parse(listing_line_json));
-
-
-    var options = {
-    chart: {
-      title: 'Monthly Rating of Host',
-      subtitle: 'By Month'
-    },
-    animation: {
-          duration: 1000,
-          easing: 'linear',
-          startup: true
-        },
-    width: 900,
-    height: 320
-  };
-
-    var chart = new google.visualization.LineChart(document.getElementById('listing_line_chart'));
-
-    chart.draw(data, options);
-  }
-</script>
-
+    <script src="static/js/demo/chart-pie-demo.js"></script>
 
 </body>
 
