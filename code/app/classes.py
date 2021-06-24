@@ -47,6 +47,28 @@ class Listings(db.Model):
     listing_reliability = db.Column(db.Float)
 
 
+class MonthlyScore(db.Model):
+    "Class for listings table"
+    listing_id = db.Column(db.Integer, primary_key=True)
+    score_month = db.Column(db.String(7), primary_key=True)
+    avg_sentiment_score = db.Column(db.Integer)
+    listing_availability = db.Column(db.Integer)
+    avg_rating = db.Column(db.Float)
+
+
+class CurrentScore(db.Model):
+    "Class for listings table"
+    listing_id = db.Column(db.Integer, primary_key=True)
+    overall_reliability = db.Column(db.Integer)
+    review_reliability = db.Column(db.Integer)
+    reviewer_reliability = db.Column(db.Integer)
+    host_reliability = db.Column(db.Integer)
+    num_fraud_reviewers = db.Column(db.Integer)
+    num_host_cancellations = db.Column(db.Integer)
+    num_positive = db.Column(db.Integer)
+    num_neutral = db.Column(db.Integer)
+    num_negative = db.Column(db.Integer)
+
 class RegistrationForm(FlaskForm):
     "Class for register form"
     username = StringField('Username:', validators=[DataRequired()])
