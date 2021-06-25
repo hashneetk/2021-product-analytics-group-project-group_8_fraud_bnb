@@ -1,5 +1,5 @@
 from app import application, classes, db
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, session, url_for
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
@@ -20,7 +20,11 @@ application.register_error_handler(404, page_not_found)
 def index():
     """Index page: Renders about.html with team member names and project
     description"""
-    return render_template('index.html', authenticated_user=current_user.is_authenticated)
+    return render_template(
+        'index.html',
+        authenticated_user=current_user.is_authenticated,
+        username=session.get('username')
+    )
 
 
 @application.route('/register', methods=('GET', 'POST'))
@@ -64,6 +68,7 @@ def login():
 
         if user is not None and user.check_password(password):
             login_user(user)
+            session['username'] = username
             return redirect(url_for('index'))
         else:
             return render_template(
@@ -96,6 +101,7 @@ def fake_dashboard():
         'dashboard.html',
         authenticated_user=current_user.is_authenticated,
         not_at_index=True,
+        username=session['username'],
     )
 
 @application.route('/analysis-reports')
@@ -105,4 +111,5 @@ def analysis_reports():
         'analysis-reports.html',
         authenticated_user=current_user.is_authenticated,
         not_at_index=True,
+        username=session['username'],
     )
