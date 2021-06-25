@@ -9,6 +9,10 @@ import folium
 
 from create_map import map_html
 
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+application.register_error_handler(404, page_not_found)
 
 @application.route('/', methods=['GET'])
 @application.route('/index', methods=['GET'])
