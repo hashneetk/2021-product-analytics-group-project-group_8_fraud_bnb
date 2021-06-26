@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>BotUI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui-theme-default.css" />
+
+    <style type="text/css">
+      
+      #frontend-bot {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+
+        box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.2);
+        width: 400px;
+        padding: 24px;
+        background-color: #ffe5d9;
+      }
+      #frontend-bot .icon {
+        position: absolute;
+        bottom: 24px;
+        left: 24px;
+        width: 100px;
+      }
+      #frontend-bot #frontend-bot-chat {
+        margin-left: 100px;
+      }
+      .botui-container {
+  background-color: #ffe5d9;
+  width: 300px;
+      }
+      .botui-message-content.text {
+background-color: #f08080;
+color: #ffffff;
+}
+
+    </style>
+  </head>
+  <body>
+
+  	<script type="text/javascript">
+
+
+  	</script>
+
+    <div id="frontend-bot">
+      <img class="icon" src="PandaPoint.png"/>
+      <div id="frontend-bot-chat">
+        <bot-ui></bot-ui>
+      </div>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+    <script src="https://unpkg.com/botui/build/botui.min.js"></script>
+
+
+
+    <script type="text/javascript">
+      
+    var botui = new BotUI('frontend-bot-chat');
+    botui.message.bot({
+content: 'Hi there! I am Diane the panda bear - your chatbot!',
+loading: true,
+delay: 2000,
+}).then(function () {
+return botui.message.bot({
+    loading: true,
+    delay: 400,
+    icon:"smile-wink",
+    content: "!(check)I love helping people",
+});
+}).then(function () {
+return botui.message.bot({
+    loading: true,
+    delay: 2000,
+    content: "What can I help you with today?",
+});
+}).then(function () {
+return botui.action.button({
+    delay: 2000,
+    loading: true,
+    addMessage: true,
+    action: [{
+        text: 'I need help with detecting fraud listing! How does your tool work?',
+        value: 'how'
+    }, {
+        text: 'How can I contact you?',
+        value: 'contact'
+    }]
+})
+}).then(function (res) {
+if (res.value == 'how') {
+ return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "Good question! This tool uses state-of-art ML algorithms to calculate total reliability of a host.",
+        }).then(function () {
+return botui.message.bot({
+    loading: true,
+    delay: 2000,
+    content: "We then breakdown the total reliability score into Reviewers, Reviews and Host Reliability ",
+});
+}).then(function () {
+return botui.action.button({
+    delay: 2000,
+    loading: true,
+    addMessage: true,
+    action: [{
+        text: 'That was helpful thank you!',
+        value: 'helpful'
+    }, {
+        text: 'I do not understand',
+        value: 'understand'
+    },
+    {
+      text:'What is Reliability?',
+      value:'reliability'
+    }]
+});
+}).then(function (res) {
+if (res.value == 'helpful') {
+ return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "have a great day!",
+        });
+} if(res.value == 'understand') {
+return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "I am sorry that I couldnt be helpful, maybe I can connect you with an agent?",
+        });
+}
+else
+{
+return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "Reliability score tells you how much you can trust a listing. The lower the score, the higher the chance the listing is fraud",
+        }).then(function(){
+  return botui.action.button({
+    delay: 1000,
+    loading: true,
+    addMessage: true,
+    action: [{
+        text: 'Wow, that sounds so cool!',
+        value: 'cool'
+    }, {
+        text: 'I do not understand',
+        value: 'understand'
+    }]
+  });
+}).then(function (res) {
+if (res.value == 'cool') {
+ return botui.message.bot({
+            loading: true,
+            delay: 1000,
+            content: "Right?! Sign up for our services!",
+        })
+} else {
+return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "I am sorry that I couldnt be helpful, please contact us using our details on our page, and the founders will get back to you",
+        })
+}
+});
+
+}
+
+});
+} else {
+return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            content: "Head over to the bottom of the page to contact us. Also I am available 24x7 at your service!",
+        });
+}
+});
+    </script>
+  </body>
+</html>
