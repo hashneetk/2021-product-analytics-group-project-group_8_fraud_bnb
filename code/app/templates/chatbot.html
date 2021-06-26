@@ -36,6 +36,22 @@
         background-color: #f08080;
         color: #ffffff;
       }
+      .btncls{
+    background-color:#B80C4D;
+    border: #2e6da4;
+  	font-family: Arial, Geneva, Arial, Helvetica,  sans-serif;
+	font-size: 15px;
+    color: #fff;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    
+    border-radius: 6px;
+    line-height: 2;
+    text-decoration:none;
+}
+
 
     </style>
   </head>
@@ -49,6 +65,7 @@
     <div id="frontend-bot">
       <img class="icon" src="static/img/PandaPoint.png">
       <div id="frontend-bot-chat">
+        <button type="button"  class="btncls" onclick="closeChatbox()">Close</button>
         <bot-ui></bot-ui>
       </div>
     </div>
@@ -183,6 +200,10 @@ return botui.message.bot({
         });
 }
 });
+    </script>
+    <script>
+      function closeChatbox()
+      {var e=document.getElementById("frontend-bot-chat");e.style.margin="100px 100px -1500px 100px";}
     </script>
   </body>
 </html>
