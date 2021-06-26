@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>test_code &#8212; fraud_bnb 0.1 documentation</title>
+    <title>test_code &#8212; fraud_bnb 1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">fraud_bnb 0.1 documentation</a></div>
+          href="../index.html">fraud_bnb 1.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -37,18 +37,35 @@
           <div class="body" role="main">
             
   <h1>Source code for test_code</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">selenium</span>
-
-<div class="viewcode-block" id="test_submit_button"><a class="viewcode-back" href="../code.html#test_code.test_submit_button">[docs]</a><span class="k">def</span> <span class="nf">test_submit_button</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Testing to verifiy that the submit button works appropriately</span>
-<span class="sd">	and redirects to the correct page.&quot;&quot;&quot;</span>
-	<span class="k">pass</span></div>
+<span></span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">classes</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
 
 
+<div class="viewcode-block" id="UserFromDB"><a class="viewcode-back" href="../code.html#test_code.UserFromDB">[docs]</a><span class="k">def</span> <span class="nf">UserFromDB</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Return user from database.&#39;&#39;&#39;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">user</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-	<span class="n">test_submit_button</span><span class="p">()</span>
+<div class="viewcode-block" id="test_db_existence"><a class="viewcode-back" href="../code.html#test_code.test_db_existence">[docs]</a><span class="k">def</span> <span class="nf">test_db_existence</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check whether the __init__ created a db and user class table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">SQLALCHEMY_DATABASE_URI</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">inspect</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="test_UserFromDB"><a class="viewcode-back" href="../code.html#test_code.test_UserFromDB">[docs]</a><span class="k">def</span> <span class="nf">test_UserFromDB</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assuming that &quot;sandhyakiran, sandhyakiran337@gmail.com,</span>
+<span class="sd">        12345678&quot; is always in the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">UserFromDB</span><span class="p">(</span><span class="s2">&quot;sandhyakiran&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s2">&quot;sandhyakiran337@gmail.com&quot;</span>
+    <span class="k">assert</span> <span class="n">UserFromDB</span><span class="p">(</span><span class="s2">&quot;sandhyakiran&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;sandhyakiran&quot;</span></div>
 </pre></div>
 
             <div class="clearer"></div>
@@ -62,7 +79,8 @@
           <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">My Code Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Auto Generated Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Required Modules</a></li>
 </ul>
 
           <div role="search">

@@ -1,10 +1,14 @@
-Auto Generated Code Documentation
+Code Documentation
 =================================
 .. automodule:: create_map
 			:members:
 			:undoc-members:
 
-.. automodule:: selen_scrap
+.. automodule:: classes
+			:members:
+			:undoc-members:
+
+.. automodule:: routes
 			:members:
 			:undoc-members:
 
