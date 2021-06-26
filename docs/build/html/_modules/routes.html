@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>routes &#8212; fraud_bnb 0.1 documentation</title>
+    <title>routes &#8212; fraud_bnb 1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">fraud_bnb 0.1 documentation</a></div>
+          href="../index.html">fraud_bnb 1.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -37,70 +37,195 @@
           <div class="body" role="main">
             
   <h1>Source code for routes</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">application</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span>
+<span></span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">application</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span><span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
 <span class="kn">from</span> <span class="nn">flask_wtf</span> <span class="kn">import</span> <span class="n">FlaskForm</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">logout_user</span>
 <span class="kn">from</span> <span class="nn">flask_wtf.file</span> <span class="kn">import</span> <span class="n">FileField</span><span class="p">,</span> <span class="n">FileRequired</span>
 <span class="kn">from</span> <span class="nn">wtforms</span> <span class="kn">import</span> <span class="n">SubmitField</span><span class="p">,</span> <span class="n">TextField</span><span class="p">,</span> <span class="n">validators</span>
-
-<span class="kn">from</span> <span class="nn">selen_scrap</span> <span class="kn">import</span> <span class="n">get_info</span>
-
-
-<div class="viewcode-block" id="URLFile"><a class="viewcode-back" href="../code.html#routes.URLFile">[docs]</a><span class="k">class</span> <span class="nc">URLFile</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">):</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s1">&#39;ListURL&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">required</span><span class="p">(),</span> <span class="n">validators</span><span class="o">.</span><span class="n">URL</span><span class="p">()])</span>
-    <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="s1">&#39;Submit&#39;</span><span class="p">)</span></div>
+<span class="kn">from</span> <span class="nn">flask_bootstrap</span> <span class="kn">import</span> <span class="n">Bootstrap</span>
 
 
-<div class="viewcode-block" id="about"><a class="viewcode-back" href="../code.html#routes.about">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">])</span>
-<span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">about</span><span class="p">():</span>
+<span class="kn">from</span> <span class="nn">create_map</span> <span class="kn">import</span> <span class="n">map_html</span>
+
+<div class="viewcode-block" id="page_not_found"><a class="viewcode-back" href="../code.html#routes.page_not_found">[docs]</a><span class="k">def</span> <span class="nf">page_not_found</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error handling for 404 error.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;404.html&#39;</span><span class="p">),</span> <span class="mi">404</span></div>
+
+<span class="n">application</span><span class="o">.</span><span class="n">register_error_handler</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="n">page_not_found</span><span class="p">)</span>
+
+<div class="viewcode-block" id="index_"><a class="viewcode-back" href="../code.html#routes.index_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">index_</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Index page: Renders about.html with team member names and project</span>
 <span class="sd">    description&quot;&quot;&quot;</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">URLFile</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;about.html&#39;</span><span class="p">,</span> <span class="n">authors</span><span class="o">=</span><span class="s1">&#39;Hashneet Kaur, </span><span class="se">\</span>
-<span class="s1">        Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, </span><span class="se">\</span>
-<span class="s1">        Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz&#39;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;*project description goes here*&#39;</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="c1"># return(&#39;&lt;h1&gt; Welcome to FraudBnB &lt;/h1&gt;&#39;)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;search.html&#39;</span><span class="p">,</span> <span class="n">authors</span><span class="o">=</span><span class="s1">&#39;Hashneet Kaur, </span><span class="se">\</span>
-<span class="s1">    Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, </span><span class="se">\</span>
-<span class="s1">    Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz&#39;</span><span class="p">,</span>
-           <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Vacation rental scams have been prevalent since well before the pandemic, &#39;</span>
-                       <span class="s1">&#39;so why haven’t rental websites such as Airbnb incorporated scam detection into their&#39;</span>
-                       <span class="s1">&#39; products? A team member recently experienced this scenario - the 15 person family arrived at a beautiful &#39;</span>
-                       <span class="s1">&#39;Beverly Hills mansion after having paid a large sum of money, only to find out that the mansion, in fact, did not exist. &#39;</span>
-                       <span class="s1">&#39;While they got their money back, the situation could have been completely avoided with proper vetting, &#39;</span>
-                       <span class="s1">&#39;and the experience was left wanting. Our product will take into account several factors such as listing reviews, &#39;</span>
-                       <span class="s1">&#39;host reviews, analysis of pictures and address verification in order to establish trust and reliability for the consumer renting on Airbnb.&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">url</span><span class="p">))</span></div>
-
-
-<span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/search&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">query</span><span class="p">():</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">URLFile</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
-        <span class="n">page_info</span> <span class="o">=</span> <span class="n">get_info</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
-            <span class="s1">&#39;search_result.html&#39;</span><span class="p">,</span> <span class="n">authors</span><span class="o">=</span><span class="s1">&#39;Hashneet Kaur, </span><span class="se">\</span>
-<span class="s1">            Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, </span><span class="se">\</span>
-<span class="s1">            Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz&#39;</span><span class="p">,</span>
-                <span class="n">description</span><span class="o">=</span><span class="s1">&#39;*:)*&#39;</span><span class="p">,</span>
-                <span class="n">list_name</span><span class="o">=</span><span class="n">page_info</span><span class="p">[</span><span class="s1">&#39;listing_name&#39;</span><span class="p">],</span>
-                <span class="n">host_name</span><span class="o">=</span><span class="n">page_info</span><span class="p">[</span><span class="s1">&#39;host_name&#39;</span><span class="p">],</span>
-                <span class="n">reviews</span><span class="o">=</span><span class="n">page_info</span><span class="p">[</span><span class="s1">&#39;reviews&#39;</span><span class="p">],</span>
-                <span class="n">rating</span><span class="o">=</span><span class="n">page_info</span><span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">]</span>
-        <span class="p">)</span>
-
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
-            <span class="s1">&#39;search.html&#39;</span><span class="p">,</span> <span class="n">authors</span><span class="o">=</span><span class="s1">&#39;Hashneet Kaur, </span><span class="se">\</span>
-<span class="s1">        Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, </span><span class="se">\</span>
-<span class="s1">        Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz&#39;</span><span class="p">,</span>
-                <span class="n">description</span><span class="o">=</span><span class="s1">&#39;*:)*&#39;</span><span class="p">,</span>
-                <span class="n">form</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="s1">&#39;index.html&#39;</span><span class="p">,</span>
+        <span class="n">authenticated_user</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">username</span> <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="register_"><a class="viewcode-back" href="../code.html#routes.register_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">register_</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Register page: Renders register.html with sign up</span>
+<span class="sd">    form asking for username, email, and password</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">registration_form</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">RegistrationForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">registration_form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">registration_form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">registration_form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">registration_form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">user_count</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> \
+            <span class="o">+</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">user_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+                <span class="s1">&#39;register.html&#39;</span><span class="p">,</span>
+                <span class="n">form</span><span class="o">=</span><span class="n">registration_form</span><span class="p">,</span>
+                <span class="n">error_msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;username: </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1"> or email: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s1"> already taken!&#39;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;register.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">registration_form</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="login_"><a class="viewcode-back" href="../code.html#routes.login_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login_</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Login page: Renders login.html with submit</span>
+<span class="sd">    form for username and password</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">login_form</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">LogInForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">login_form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">login_form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">login_form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+            <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+                <span class="s1">&#39;login.html&#39;</span><span class="p">,</span>
+                <span class="n">form</span><span class="o">=</span><span class="n">login_form</span><span class="p">,</span>
+                <span class="n">error_msg</span><span class="o">=</span><span class="s1">&#39;Invalid username or password!&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;login.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">login_form</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logout_"><a class="viewcode-back" href="../code.html#routes.logout_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">logout_</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Logout page: Unauthorized server error (expected)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="display_n_listing_"><a class="viewcode-back" href="../code.html#routes.display_n_listing_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/reliability-map/&lt;max_listing&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">display_n_listing_</span><span class="p">(</span><span class="n">max_listing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays map with the the given number of listings.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">map_html</span><span class="p">(</span><span class="n">max_listing</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="analysis_reports_"><a class="viewcode-back" href="../code.html#routes.analysis_reports_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/analysis-reports&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">analysis_reports_</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Placeholder for page for upcoming features.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s1">&#39;analysis-reports.html&#39;</span><span class="p">,</span>
+        <span class="n">authenticated_user</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">,</span>
+        <span class="n">not_at_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dashboard_"><a class="viewcode-back" href="../code.html#routes.dashboard_">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/dashboard&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">dashboard_</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;DashBoard page: </span>
+<span class="sd">    With a listing ID as an input given by authenticated user,</span>
+<span class="sd">    Outputs charts with :</span>
+<span class="sd">    Overall Reliability, Reviews Reliability, Reviewer Reliability, Host Reliability </span>
+<span class="sd">    as scores,</span>
+<span class="sd">    Number of Fraud Reviewers, Number of Host Cancellations,</span>
+<span class="sd">    Average Review Sentiment Scores of the latest 4 months,</span>
+<span class="sd">    Average Ratings Scores of the latest 4 months,</span>
+<span class="sd">    Listing Availability of the latest 4 months,</span>
+<span class="sd">    Number of Positive, Neutral and Negative Reviews.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">listingid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;2020-02&#39;</span><span class="p">,</span><span class="s1">&#39;2020-03&#39;</span><span class="p">,</span><span class="s1">&#39;2020-04&#39;</span><span class="p">,</span><span class="s1">&#39;2020-05&#39;</span><span class="p">]</span>
+    <span class="n">sentiments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Postive&quot;</span><span class="p">,</span><span class="s2">&quot;Neutral&quot;</span><span class="p">,</span><span class="s2">&quot;Negative&quot;</span><span class="p">]</span>
+    <span class="n">sentiment_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+    <span class="n">listing_availability</span> <span class="o">=</span> <span class="p">[</span><span class="mi">55</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+    <span class="n">avg_review_sentiment_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">95</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">94</span><span class="p">,</span> <span class="mi">95</span><span class="p">]</span>
+    <span class="n">avg_rating_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">host_cancellations</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">fraud_reviewers</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">overall_reliability</span> <span class="o">=</span> <span class="mi">80</span>
+    <span class="n">review_reliability</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">reviewer_reliability</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">host_reliability</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+    <span class="k">if</span> <span class="n">listingid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># print(&quot;input from browser&quot;,listingid)</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">MonthlyScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">score_month</span><span class="p">)</span>
+        <span class="c1"># print(&quot;dates: &quot;, test)</span>
+
+        <span class="c1"># Pie chart</span>
+        <span class="n">pos_score</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_positive</span>
+        <span class="n">neu_score</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_neutral</span>
+        <span class="n">neg_score</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_negative</span>
+        <span class="n">sentiment_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos_score</span><span class="p">,</span> <span class="n">neu_score</span><span class="p">,</span> <span class="n">neg_score</span><span class="p">]</span>
+
+        <span class="c1"># small cards</span>
+        <span class="n">host_cancellations</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_host_cancellations</span>
+        <span class="n">fraud_reviewers</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_fraud_reviewers</span>
+
+        <span class="c1"># top cards</span>
+        <span class="n">overall_reliability</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">overall_reliability</span><span class="p">)</span>
+        <span class="n">review_reliability</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">review_reliability</span>
+        <span class="n">reviewer_reliability</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reviewer_reliability</span>
+        <span class="n">host_reliability</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">host_reliability</span>
+
+        <span class="n">listing_availability</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">MonthlyScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">listing_availability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">listing_availability</span><span class="p">)</span>
+
+        <span class="n">avg_review_sentiment_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">MonthlyScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">avg_review_sentiment_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">avg_sentiment_score</span><span class="p">)</span>
+
+        <span class="n">avg_rating_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">MonthlyScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span> <span class="o">=</span> <span class="n">listingid</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">avg_rating_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">avg_rating</span><span class="p">)</span>
+
+
+
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;dashboard.html&#39;</span><span class="p">,</span><span class="n">authenticated_user</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span><span class="n">dates</span><span class="o">=</span><span class="n">dates</span><span class="p">,</span><span class="n">sentiments</span><span class="o">=</span><span class="n">sentiments</span>
+                                        <span class="p">,</span><span class="n">sentiment_values</span><span class="o">=</span><span class="n">sentiment_values</span>
+                                        <span class="p">,</span><span class="n">listing_availability</span><span class="o">=</span><span class="n">listing_availability</span>
+                                        <span class="p">,</span><span class="n">avg_review_sentiment_scores</span><span class="o">=</span><span class="n">avg_review_sentiment_scores</span>
+                                        <span class="p">,</span><span class="n">avg_rating_scores</span><span class="o">=</span><span class="n">avg_rating_scores</span><span class="p">,</span> 
+                                        <span class="n">host_cancellations</span> <span class="o">=</span> <span class="n">host_cancellations</span><span class="p">,</span> 
+                                        <span class="n">fraud_reviewers</span><span class="o">=</span> <span class="n">fraud_reviewers</span>
+                                        <span class="p">,</span><span class="n">overall_reliability</span> <span class="o">=</span> <span class="n">overall_reliability</span><span class="p">,</span>
+                                        <span class="n">review_reliability</span> <span class="o">=</span> <span class="n">review_reliability</span><span class="p">,</span>
+                                        <span class="n">reviewer_reliability</span> <span class="o">=</span> <span class="n">reviewer_reliability</span><span class="p">,</span>
+                                        <span class="n">host_reliability</span> <span class="o">=</span> <span class="n">host_reliability</span><span class="p">)</span></div>
 </pre></div>
 
             <div class="clearer"></div>
@@ -114,7 +239,8 @@
           <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">My Code Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Auto Generated Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Required Modules</a></li>
 </ul>
 
           <div role="search">

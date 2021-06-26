@@ -22,7 +22,7 @@ copyright = '2021, Audrey Barszcz, Hashneet Kaur, Jordan Uyeki, Kaiqi Guo, Phill
 author = 'Audrey Barszcz, Hashneet Kaur, Jordan Uyeki, Kaiqi Guo, Phillip Navo, Sandhya Kiran, Shruti Roy, Vaishnavi Kashyap'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '1.0'
 
 
 # -- General configuration ---------------------------------------------------
