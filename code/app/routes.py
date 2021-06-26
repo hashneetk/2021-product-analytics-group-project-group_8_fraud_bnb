@@ -1,5 +1,5 @@
 from app import application, classes, db
-from flask import render_template, request,redirect, session, url_for
+from flask import render_template, request,redirect, url_for
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
@@ -23,7 +23,7 @@ def index():
     return render_template(
         'index.html',
         authenticated_user=current_user.is_authenticated,
-        username=session.get('username')
+        username=current_user.username if current_user.is_authenticated else ''
     )
 
 
@@ -68,7 +68,6 @@ def login():
 
         if user is not None and user.check_password(password):
             login_user(user)
-            session['username'] = username
             return redirect(url_for('index'))
         else:
             return render_template(
@@ -102,7 +101,7 @@ def analysis_reports():
         'analysis-reports.html',
         authenticated_user=current_user.is_authenticated,
         not_at_index=True,
-        username=session['username'],
+        username=current_user.username,
     )
 
 
