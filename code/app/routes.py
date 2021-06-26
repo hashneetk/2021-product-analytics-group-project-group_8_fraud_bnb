@@ -10,7 +10,8 @@ from flask_bootstrap import Bootstrap
 from create_map import map_html
 
 def page_not_found(e):
-  return render_template('404.html'), 404
+    """Error handling for 404 error."""
+    return render_template('404.html'), 404
 
 application.register_error_handler(404, page_not_found)
 
@@ -91,12 +92,14 @@ def logout():
 @application.route('/reliability-map/<max_listing>')
 @login_required
 def display_n_listing(max_listing):
+    """Displays map with the the given number of listings."""
     return map_html(max_listing)
 
 
 @application.route('/analysis-reports')
 @login_required
 def analysis_reports():
+    """Placeholder for page for upcoming features."""
     return render_template(
         'analysis-reports.html',
         authenticated_user=current_user.is_authenticated,

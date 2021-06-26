@@ -6,6 +6,20 @@ from sqlalchemy.orm import load_only
 from app import classes
 
 def map_html(max_listing):
+    """
+    Create HTML for map displaying reliability of current listings.
+
+    Paramters
+    ---------
+    max_listings: int
+        - limits the number of listings to display.
+    
+    Returns
+    -------
+    map_html
+        - the html of the generated map.
+    """
+
     map = folium.Map(
         [34.052235, -118.243683], zoom_start=11,
     )

@@ -49,7 +49,7 @@ class Listings(db.Model):
     longtitude = db.Column(db.Float)
 
 class MonthlyScore(db.Model):
-    "Class for listings table"
+    "Class for monthly score table"
     listing_id = db.Column(db.Integer, primary_key=True)
     score_month = db.Column(db.String(7), primary_key=True)
     avg_sentiment_score = db.Column(db.Integer)
@@ -58,7 +58,7 @@ class MonthlyScore(db.Model):
 
 
 class CurrentScore(db.Model):
-    "Class for listings table"
+    "Class for current_score table"
     listing_id = db.Column(db.Integer, primary_key=True)
     overall_reliability = db.Column(db.Integer)
     review_reliability = db.Column(db.Integer)
@@ -84,11 +84,6 @@ class LogInForm(FlaskForm):
     username = StringField('Username:', validators=[DataRequired()])
     password = PasswordField('Password:', validators=[DataRequired()])
     submit = SubmitField('Login')
-
-
-class ListIdForm(FlaskForm):
-    listing_id = StringField('ListURL', validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
 
 @login_manager.user_loader
