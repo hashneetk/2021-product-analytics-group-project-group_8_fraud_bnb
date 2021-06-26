@@ -48,7 +48,6 @@ paramiko==2.7.2
 pathspec==0.5.9
 Pillow==8.2.0
 pluggy==0.13.1
-psycopg2==2.8.6
 psycopg2-binary==2.8.6
 py==1.10.0
 pycparser==2.20
