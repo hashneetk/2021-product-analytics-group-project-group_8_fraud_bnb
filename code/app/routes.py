@@ -1,11 +1,11 @@
 from app import application, classes, db
-from flask import render_template, redirect, session, url_for
+from flask import render_template, request,redirect, session, url_for
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, TextField, validators
+from flask_bootstrap import Bootstrap
 
-import folium
 
 from create_map import map_html
 
@@ -94,15 +94,6 @@ def logout():
 def display_n_listing(max_listing):
     return map_html(max_listing)
 
-@application.route('/dashboard')
-@login_required
-def fake_dashboard():
-    return render_template(
-        'dashboard.html',
-        authenticated_user=current_user.is_authenticated,
-        not_at_index=True,
-        username=session['username'],
-    )
 
 @application.route('/analysis-reports')
 @login_required
@@ -113,3 +104,84 @@ def analysis_reports():
         not_at_index=True,
         username=session['username'],
     )
+
+
+@application.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    """DashBoard page: 
+    With a listing ID as an input given by authenticated user,
+    Outputs charts with :
+    Overall Reliability, Reviews Reliability, Reviewer Reliability, Host Reliability 
+    as scores,
+    Number of Fraud Reviewers, Number of Host Cancellations,
+    Average Review Sentiment Scores of the latest 4 months,
+    Average Ratings Scores of the latest 4 months,
+    Listing Availability of the latest 4 months,
+    Number of Positive, Neutral and Negative Reviews.
+    """
+    listingid = request.args.get('key')
+    dates = ['2020-02','2020-03','2020-04','2020-05']
+    sentiments = ["Postive","Neutral","Negative"]
+    sentiment_values = [20, 30, 50]
+    listing_availability = [55, 49, 44, 24, 15]
+    avg_review_sentiment_scores = [95, 87, 44, 94, 95]
+    avg_rating_scores = [5, 4, 4, 3]
+
+    host_cancellations = 1
+    fraud_reviewers = 2
+    overall_reliability = 80
+    review_reliability = 60
+    reviewer_reliability = 30
+    host_reliability = 20
+
+
+    if listingid is not None:
+        # print("input from browser",listingid)
+        dates = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            dates.append(row.score_month)
+        # print("dates: ", test)
+
+        # Pie chart
+        pos_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_positive
+        neu_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_neutral
+        neg_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_negative
+        sentiment_values = [pos_score, neu_score, neg_score]
+
+        # small cards
+        host_cancellations = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_host_cancellations
+        fraud_reviewers = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_fraud_reviewers
+
+        # top cards
+        overall_reliability = int(classes.CurrentScore.query.filter_by(listing_id = listingid).first().overall_reliability)
+        review_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().review_reliability
+        reviewer_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().reviewer_reliability
+        host_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().host_reliability
+
+        listing_availability = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            listing_availability.append(row.listing_availability)
+
+        avg_review_sentiment_scores = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            avg_review_sentiment_scores.append(row.avg_sentiment_score)
+
+        avg_rating_scores = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            avg_rating_scores.append(row.avg_rating)
+
+
+
+
+    return render_template('dashboard.html',authenticated_user=current_user.username,dates=dates,sentiments=sentiments
+                                        ,sentiment_values=sentiment_values
+                                        ,listing_availability=listing_availability
+                                        ,avg_review_sentiment_scores=avg_review_sentiment_scores
+                                        ,avg_rating_scores=avg_rating_scores, 
+                                        host_cancellations = host_cancellations, 
+                                        fraud_reviewers= fraud_reviewers
+                                        ,overall_reliability = overall_reliability,
+                                        review_reliability = review_reliability,
+                                        reviewer_reliability = reviewer_reliability,
+                                        host_reliability = host_reliability)
