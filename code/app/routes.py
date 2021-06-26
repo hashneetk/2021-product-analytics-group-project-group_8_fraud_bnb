@@ -1,62 +1,29 @@
 from app import application, classes, db
-from flask import render_template, redirect, url_for
+from flask import render_template, request,redirect, url_for
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, TextField, validators
+from flask_bootstrap import Bootstrap
 
-import folium
 
 from create_map import map_html
 
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+application.register_error_handler(404, page_not_found)
 
 @application.route('/', methods=['GET'])
+@application.route('/index', methods=['GET'])
 @application.route('/about', methods=['GET'])
 def index():
     """Index page: Renders about.html with team member names and project
     description"""
-
-    return (render_template(
-        'about.html',
-        authors='Hashneet Kaur, \
-    Phillip Navo, Shruti Roy, Vaishnavi Kashyap, Sandhya Kiran, \
-    Kaiqi Guo, Jordan Uyeki, and Audrey Barszcz',
-        description='Vacation rental scams have been prevalent since well \
-        before the pandemic, so why haven’t rental websites such as Airbnb \
-        incorporated scam detection into their products? A team member \
-        recently experienced this scenario - the 15 person family arrived \
-        at a beautiful Beverly Hills mansion after having paid a large sum \
-        of money, only to find out that the mansion, in fact, did not exist. \
-        While they got their money back, the situation could have been \
-        completely avoided with proper vetting, and the experience was left \
-        wanting. Our product will take into account several factors such as \
-        listing reviews, host reviews, analysis of pictures and address \
-        verification in order to establish trust and reliability for the \
-        consumer renting on Airbnb.',
-        ))
-
-
-@application.route('/search/<username>', methods=['POST', 'GET'])
-@login_required
-def search(username):
-    listing_id_form = classes.ListIdForm()
-    if listing_id_form.validate_on_submit():
-        listing_id = listing_id_form.listing_id.data
-        score = classes.Listings.query.filter_by(listing_id=int(listing_id)).first().listing_reliability
-
-        if not score:
-            score = 'Sorry, score not found.'
-
-        return render_template('search_result.html',
-                               listing_id=listing_id,
-                               username=username,
-                               score=score,
-                               )
-
     return render_template(
-        'search.html',
-        username=username,
-        form=listing_id_form,
+        'index.html',
+        authenticated_user=current_user.is_authenticated,
+        username=current_user.username if current_user.is_authenticated else ''
     )
 
 
@@ -74,13 +41,16 @@ def register():
         user_count = classes.User.query.filter_by(username=username).count() \
             + classes.User.query.filter_by(email=email).count()
         if (user_count > 0):
-            return '<h1>Error - Existing user : ' + username \
-                   + ' OR ' + email + '</h1>'
+            return render_template(
+                'register.html',
+                form=registration_form,
+                error_msg=f'username: {username} or email: {email} already taken!'
+            )
         else:
             user = classes.User(username, email, password)
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
     return render_template('register.html', form=registration_form)
 
 
@@ -98,7 +68,13 @@ def login():
 
         if user is not None and user.check_password(password):
             login_user(user)
-            return redirect(url_for('search', username=username))
+            return redirect(url_for('index'))
+        else:
+            return render_template(
+                'login.html',
+                form=login_form,
+                error_msg='Invalid username or password!'
+            )
 
     return render_template('login.html', form=login_form)
 
@@ -108,21 +84,103 @@ def login():
 def logout():
     """Logout page: Unauthorized server error (expected)
     """
-    before_logout = '<h1> Before logout - is_autheticated : ' \
-                    + str(current_user.is_authenticated) + '</h1>'
-
     logout_user()
-
-    after_logout = '<h1> After logout - is_autheticated : ' \
-                   + str(current_user.is_authenticated) + '</h1>'
-    return before_logout + after_logout
-
-
-@application.route('/reliability-map')
-def display_1000_listing():
-    return map_html(1000)
+    return redirect(url_for('index'))
 
 
 @application.route('/reliability-map/<max_listing>')
+@login_required
 def display_n_listing(max_listing):
     return map_html(max_listing)
+
+
+@application.route('/analysis-reports')
+@login_required
+def analysis_reports():
+    return render_template(
+        'analysis-reports.html',
+        authenticated_user=current_user.is_authenticated,
+        not_at_index=True,
+        username=current_user.username,
+    )
+
+
+@application.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    """DashBoard page: 
+    With a listing ID as an input given by authenticated user,
+    Outputs charts with :
+    Overall Reliability, Reviews Reliability, Reviewer Reliability, Host Reliability 
+    as scores,
+    Number of Fraud Reviewers, Number of Host Cancellations,
+    Average Review Sentiment Scores of the latest 4 months,
+    Average Ratings Scores of the latest 4 months,
+    Listing Availability of the latest 4 months,
+    Number of Positive, Neutral and Negative Reviews.
+    """
+    listingid = request.args.get('key')
+    dates = ['2020-02','2020-03','2020-04','2020-05']
+    sentiments = ["Postive","Neutral","Negative"]
+    sentiment_values = [20, 30, 50]
+    listing_availability = [55, 49, 44, 24, 15]
+    avg_review_sentiment_scores = [95, 87, 44, 94, 95]
+    avg_rating_scores = [5, 4, 4, 3]
+
+    host_cancellations = 1
+    fraud_reviewers = 2
+    overall_reliability = 80
+    review_reliability = 60
+    reviewer_reliability = 30
+    host_reliability = 20
+
+
+    if listingid is not None:
+        # print("input from browser",listingid)
+        dates = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            dates.append(row.score_month)
+        # print("dates: ", test)
+
+        # Pie chart
+        pos_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_positive
+        neu_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_neutral
+        neg_score = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_negative
+        sentiment_values = [pos_score, neu_score, neg_score]
+
+        # small cards
+        host_cancellations = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_host_cancellations
+        fraud_reviewers = classes.CurrentScore.query.filter_by(listing_id = listingid).first().num_fraud_reviewers
+
+        # top cards
+        overall_reliability = int(classes.CurrentScore.query.filter_by(listing_id = listingid).first().overall_reliability)
+        review_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().review_reliability
+        reviewer_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().reviewer_reliability
+        host_reliability = classes.CurrentScore.query.filter_by(listing_id = listingid).first().host_reliability
+
+        listing_availability = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            listing_availability.append(row.listing_availability)
+
+        avg_review_sentiment_scores = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            avg_review_sentiment_scores.append(row.avg_sentiment_score)
+
+        avg_rating_scores = []
+        for row in classes.MonthlyScore.query.filter_by(listing_id = listingid).limit(4):
+            avg_rating_scores.append(row.avg_rating)
+
+
+
+
+    return render_template('dashboard.html',authenticated_user=current_user.username,dates=dates,sentiments=sentiments
+                                        ,sentiment_values=sentiment_values
+                                        ,listing_availability=listing_availability
+                                        ,avg_review_sentiment_scores=avg_review_sentiment_scores
+                                        ,avg_rating_scores=avg_rating_scores, 
+                                        host_cancellations = host_cancellations, 
+                                        fraud_reviewers= fraud_reviewers
+                                        ,overall_reliability = overall_reliability,
+                                        review_reliability = review_reliability,
+                                        reviewer_reliability = reviewer_reliability,
+                                        host_reliability = host_reliability)

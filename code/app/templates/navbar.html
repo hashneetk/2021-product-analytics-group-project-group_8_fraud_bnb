@@ -1,0 +1,52 @@
+<header id="header" class="fixed-top d-flex align-items-center">
+    <div class="container d-flex justify-content-between">
+
+      <div class="logo">
+        <h1><a href="index">FraudBnB</a></h1>
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+        {% if not_at_index %}
+            <li><a class="nav-link scrollto active" href="index">Home</a></li>
+        {% else %}
+            <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+            <li><a class="nav-link scrollto" href="#about">About</a></li>
+            <li><a class="nav-link scrollto" href="#services">Services</a></li>
+            <li><a class="nav-link scrollto" href="#team">Team</a></li>
+        {% endif %}
+
+        {% if authenticated_user %}
+            <!-- place holder for drop down menu, waiting for dashboard route -->
+            <li class="dropdown"><a href="#"><span>My Tools</span> <i class="bi bi-chevron-down"></i></a>
+                <ul>
+                  <li><a href="dashboard">Dashboard</a></li>
+                  <li>
+                    <a href="reliability-map/1000" target="popup" 
+                       onclick="window.open('reliability-map/1000','popup','width=1000,height=600');return false;">
+                       Reliability Map
+                    </a>
+                  </li>
+                  <li><a href="analysis-reports">Analysis Reports<br/>(Coming Soon)</a></li>
+                </ul>
+            </li>
+            <li class="dropdown"><a href="#"><span>{{username}}</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+                <li><a href="logout">Logout</a></li>
+              </ul>
+          </li>
+            
+        {% elif not authenticated_user %}
+            <li class="dropdown"><a href="#"><span>Login / Register</span> <i class="bi bi-chevron-down"></i></a>
+                <ul>
+                <li><a href="login">Login</a></li>
+                <li><a href="register">Register</a></li>
+                </ul>
+            </li>
+        {% endif %}
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header>
