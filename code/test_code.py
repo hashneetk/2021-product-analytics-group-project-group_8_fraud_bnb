@@ -26,3 +26,13 @@ def test_UserFromDB():
         """
     assert UserFromDB("sandhyakiran").email == "sandhyakiran337@gmail.com"
     assert UserFromDB("sandhyakiran").username == "sandhyakiran"
+
+
+def test_listing_id_data():
+    """
+    Testing Data generated on Dashboard based on the
+    corresponding Listing Value 13776
+    is correct
+    """
+    assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_host_cancellations == 0
+    assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_fraud_reviewers == 4

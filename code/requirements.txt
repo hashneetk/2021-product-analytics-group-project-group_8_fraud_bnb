@@ -63,7 +63,6 @@ PyVirtualDisplay==0.2.1
 PyYAML==5.4.1
 requests==2.25.1
 s3transfer==0.4.2
-selenium==3.11.0
 semantic-version==2.8.5
 six==1.14.0
 snowballstemmer==2.1.0
