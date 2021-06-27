@@ -1,23 +1,22 @@
-import sys
 import numpy as np
 import pandas as pd
-import pickle
 from textatistic import Textatistic
 from tqdm import tqdm
-import multiprocessing as mp
-from multiprocessing import Pool
-from sklearn.feature_extraction.text import TfidfVectorizer
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
-reviews = pd.read_pickle('reviews.pkl')
-listing = pd.read_csv('listings.csv')
-df_listing = listing[listing['id'].isin(reviews['listing_id'])]
-df_reviews = reviews[reviews['listing_id'].isin(listing['id'])]
-
+def read_files():
+    """Read the data into dataframes"""
+    reviews = pd.read_pickle('reviews.pkl')
+    listing = pd.read_csv('listings.csv')
+    df_listing = listing[listing['id'].isin(reviews['listing_id'])]
+    df_reviews = reviews[reviews['listing_id'].isin(listing['id'])]
+    return df_listing, df_reviews
 
 def text_score(x):
+    """Check score for each review text"""
     try:
         return Textatistic(x).scores['flesch_score']
     except:
@@ -26,12 +25,36 @@ analyser = SentimentIntensityAnalyzer()
 
 
 def SentimentIntensityScore(sentence):
+    """Calculate sentiment score for each review comment"""
     score = analyser.polarity_scores(sentence)
     return score['compound']
+
+df_listing, df_reviews = read_files()
 scores = []
 cancel_flag = []
 length = []
 sentiment_score = []
+
+def num_items(series1):
+    """Get the number of the items listed in a string"""
+    num = [len(i.replace('[', '').replace(']', '').
+                  replace("'", '').split(',')) for i in
+              series1]
+    return num
+
+def sentiment_score_category(df, col_name):
+    """Divide the sentiment score in different categories based on the value"""
+    df.loc[df_reviews_new[col_name] <
+                       0.50, 'negative_review'] = 1
+    df['negative_review'] = df['negative_review'].fillna(0)
+    df.loc[(df[col_name] <= 0.50) &
+                       (df[col_name] <= 0.60),
+                       'neutral_review'] = 1
+    df['neutral_review'] = df['neutral_review'].fillna(0)
+    df.loc[df[col_name] >
+                       0.60, 'positive_review'] = 1
+    return df
+
 for i in tqdm(range(len(df_reviews['comments']))):
     x = df_reviews['comments'][i]
     if isinstance(x, str):
@@ -82,6 +105,7 @@ df_reviews_new = gp1.merge(df_reviews_new,
 df_reviews_new['listing_review_count'] = \
     df_reviews_new['review_count'].rank(pct=True)
 
+# Add all the fields for review to get the overall score
 df_listing['review_overall_score'] = \
     df_listing['review_scores_accuracy'] \
     + df_listing['review_scores_rating'] \
@@ -105,10 +129,8 @@ df_listing['host_identity_flag'] = 0
 df_listing['host_identity_flag'] = np.where(
     df_listing['host_identity_verified'] == 't',
     1, df_listing['host_identity_flag'])
-df_listing['host_verification_list'] = \
-    [len(i.replace('[', '').replace(']', '').
-         replace("'", '').split(',')) for i in
-     df_listing['host_verifications']]
+
+df_listing['host_verification_list'] = num_items(df_listing['host_verification'])
 df_listing['host_v_list_pt'] = \
     df_listing['host_verification_list'].rank(pct=True)
 m2 = df_listing[['listing_id',
@@ -186,15 +208,7 @@ final['cancel_flag'] = \
     final['cancel_flag'].astype(int)
 
 # Add details for sentiment score
-df_reviews_new.loc[df_reviews_new['sentiment_score'] <
-                   0.50, 'negative_review'] = 1
-df_reviews_new['negative_review'] = df_reviews_new['negative_review'].fillna(0)
-df_reviews_new.loc[(df_reviews_new['sentiment_score'] <= 0.50) &
-                   (df_reviews_new['sentiment_score'] <= 0.60),
-                   'neutral_review'] = 1
-df_reviews_new['neutral_review'] = df_reviews_new['neutral_review'].fillna(0)
-df_reviews_new.loc[df_reviews_new['sentiment_score'] >
-                   0.60, 'positive_review'] = 1
+df_reviews_new = sentiment_score_category(df_reviews_new,'sentiment_score')
 df_reviews_new['positive_review'] = df_reviews_new['positive_review'].fillna(0)
 df1 = df_reviews_new[['listing_id',
                       'sentiment_score',
@@ -222,6 +236,7 @@ df_final1_copy.drop(columns=['overall_score_pt',
                              'reviewer_score_pt',
                              'host_score_pt',
                              'cancel_flag'], inplace=True)
+df_final1_copy['sentiment_score'] = df_final1_copy['sentiment_score'].fillna(0)
 df_final1_copy['sentiment_score'] = df_final1_copy['sentiment_score']*100
 df_final1_copy['sentiment_score'] = \
     df_final1_copy['sentiment_score'].astype(int)
@@ -246,7 +261,3 @@ final_2 = final_1[final_1['listing_id'].isin(listing_id_final)]
 # Convert to csv
 final_2.to_csv('listing_score1.csv')
 df_final2_new1.to_csv('monthly_score1.csv')
-
-
-
-
