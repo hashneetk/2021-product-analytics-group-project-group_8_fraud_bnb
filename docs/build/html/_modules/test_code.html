@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>test_code &#8212; fraud_bnb 1.0 documentation</title>
+    <title>test_code &#8212; FraudBnB 1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">fraud_bnb 1.0 documentation</a></div>
+          href="../index.html">FraudBnB 1.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |
@@ -65,6 +65,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">UserFromDB</span><span class="p">(</span><span class="s2">&quot;sandhyakiran&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s2">&quot;sandhyakiran337@gmail.com&quot;</span>
     <span class="k">assert</span> <span class="n">UserFromDB</span><span class="p">(</span><span class="s2">&quot;sandhyakiran&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;sandhyakiran&quot;</span></div>
+
+
+<div class="viewcode-block" id="test_listing_id_data"><a class="viewcode-back" href="../code.html#test_code.test_listing_id_data">[docs]</a><span class="k">def</span> <span class="nf">test_listing_id_data</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Testing Data generated on Dashboard based on the</span>
+<span class="sd">    corresponding Listing Value 13776</span>
+<span class="sd">    is correct</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span><span class="o">=</span><span class="mi">13776</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_host_cancellations</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">classes</span><span class="o">.</span><span class="n">CurrentScore</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">listing_id</span><span class="o">=</span><span class="mi">13776</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">num_fraud_reviewers</span> <span class="o">==</span> <span class="mi">4</span></div>
 </pre></div>
 
             <div class="clearer"></div>
@@ -111,7 +121,7 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Audrey Barszcz, Hashneet Kaur, Jordan Uyeki, Kaiqi Guo, Phillip Navo, Sandhya Kiran, Shruti Roy, Vaishnavi Kashyap.
+        &#169; Copyright 2021, Audrey Barszcz, Hashneet Kaur, Sandhya Kiran, Jordan Uyeki, Kaiqi Guo, Shruti Roy, Vaishnavi Kashyap, Phillip Navo.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
         </div>

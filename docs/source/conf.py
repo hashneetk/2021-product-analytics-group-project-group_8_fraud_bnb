@@ -13,13 +13,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../code/'))
-
+sys.path.insert(0, os.path.abspath('../../code/app/'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'fraud_bnb'
-copyright = '2021, Audrey Barszcz, Hashneet Kaur, Jordan Uyeki, Kaiqi Guo, Phillip Navo, Sandhya Kiran, Shruti Roy, Vaishnavi Kashyap'
-author = 'Audrey Barszcz, Hashneet Kaur, Jordan Uyeki, Kaiqi Guo, Phillip Navo, Sandhya Kiran, Shruti Roy, Vaishnavi Kashyap'
+project = 'FraudBnB'
+copyright = '2021, Audrey Barszcz, Hashneet Kaur, Sandhya Kiran, Jordan Uyeki, Kaiqi Guo, Shruti Roy, Vaishnavi Kashyap, Phillip Navo'
+author = 'Audrey Barszcz, Hashneet Kaur, Sandhya Kiran, Jordan Uyeki, Kaiqi Guo, Shruti Roy, Vaishnavi Kashyap, Phillip Navo'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'
@@ -30,7 +30,7 @@ release = '1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.viewcode', 'sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>create_map &#8212; FraudBnB 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">FraudBnB 1.0 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for create_map</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">folium</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">load_only</span>
+
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">classes</span>
+
+<div class="viewcode-block" id="map_html"><a class="viewcode-back" href="../code.html#create_map.map_html">[docs]</a><span class="k">def</span> <span class="nf">map_html</span><span class="p">(</span><span class="n">max_listing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create HTML for map displaying reliability of current listings.</span>
+
+<span class="sd">    Paramters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    max_listings: int</span>
+<span class="sd">        - limits the number of listings to display.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    map_html</span>
+<span class="sd">        - the html of the generated map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">map</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+        <span class="p">[</span><span class="mf">34.052235</span><span class="p">,</span> <span class="o">-</span><span class="mf">118.243683</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">color_map</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;RdYlGn&#39;</span><span class="p">)</span>
+    <span class="n">query_res</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">query</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">listing_reliability</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">latitude</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="n">load_only</span><span class="p">(</span>
+                <span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">listing_id</span><span class="p">,</span>
+                <span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">listing_reliability</span><span class="p">,</span>
+                <span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                <span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">longtitude</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span> \
+        <span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Listings</span><span class="o">.</span><span class="n">listing_id</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">max_listing</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">query_res</span><span class="p">:</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">listing_reliability</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">color_hex</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">color_map</span><span class="p">(</span><span class="n">score</span><span class="o">/</span><span class="mi">100</span><span class="p">))</span>
+
+        <span class="n">folium</span><span class="o">.</span><span class="n">CircleMarker</span><span class="p">(</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">longtitude</span><span class="p">],</span>
+            <span class="n">popup</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;ID: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">listing_id</span><span class="si">}</span><span class="se">\n</span><span class="s1">Score : </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">color_hex</span><span class="p">,</span>
+            <span class="n">fill_color</span><span class="o">=</span><span class="n">color_hex</span><span class="p">,</span>
+            <span class="n">fill_opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;Click for more&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">map</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">My Code Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Required Modules</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Audrey Barszcz, Hashneet Kaur, Sandhya Kiran, Jordan Uyeki, Kaiqi Guo, Shruti Roy, Vaishnavi Kashyap, Phillip Navo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
