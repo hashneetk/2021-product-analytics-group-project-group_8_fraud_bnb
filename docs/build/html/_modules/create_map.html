@@ -44,6 +44,7 @@
 
 <span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">classes</span>
 
+
 <div class="viewcode-block" id="map_html"><a class="viewcode-back" href="../code.html#create_map.map_html">[docs]</a><span class="k">def</span> <span class="nf">map_html</span><span class="p">(</span><span class="n">max_listing</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create HTML for map displaying reliability of current listings.</span>
@@ -52,7 +53,7 @@
 <span class="sd">    ---------</span>
 <span class="sd">    max_listings: int</span>
 <span class="sd">        - limits the number of listings to display.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    map_html</span>
@@ -88,7 +89,7 @@
             <span class="n">color</span><span class="o">=</span><span class="n">color_hex</span><span class="p">,</span>
             <span class="n">fill_color</span><span class="o">=</span><span class="n">color_hex</span><span class="p">,</span>
             <span class="n">fill_opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;Click for more&quot;</span>
+            <span class="n">tooltip</span><span class="o">=</span><span class="s2">&quot;Click for more&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">map</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span></div>

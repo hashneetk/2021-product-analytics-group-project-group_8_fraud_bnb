@@ -9,3 +9,8 @@ Code Documentation
 .. automodule:: create_map
     :members:
     :undoc-members:
+
+
+.. automodule:: score
+    :members:
+    :undoc-members:

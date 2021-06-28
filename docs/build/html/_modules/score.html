@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>score &#8212; FraudBnB 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">FraudBnB 1.0 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for score</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">textatistic</span> <span class="kn">import</span> <span class="n">Textatistic</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">vaderSentiment.vaderSentiment</span> <span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_files"><a class="viewcode-back" href="../code.html#score.read_files">[docs]</a><span class="k">def</span> <span class="nf">read_files</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Read the data into dataframes&quot;&quot;&quot;</span>
+    <span class="n">reviews</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;/Users/shrimp87/classes/usf/mod_6/msds603/2021-product-analytics-group-project-group_8_fraud_bnb/code/reviews.pkl&#39;</span><span class="p">)</span>
+    <span class="n">listing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/Users/shrimp87/classes/usf/mod_6/msds603/2021-product-analytics-group-project-group_8_fraud_bnb/code/listings.csv&#39;</span><span class="p">)</span>
+    <span class="n">df_listing</span> <span class="o">=</span> <span class="n">listing</span><span class="p">[</span><span class="n">listing</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">reviews</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">])]</span>
+    <span class="n">df_reviews</span> <span class="o">=</span> <span class="n">reviews</span><span class="p">[</span><span class="n">reviews</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">listing</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])]</span>
+    <span class="k">return</span> <span class="n">df_listing</span><span class="p">,</span> <span class="n">df_reviews</span></div>
+
+
+<div class="viewcode-block" id="text_score"><a class="viewcode-back" href="../code.html#score.text_score">[docs]</a><span class="k">def</span> <span class="nf">text_score</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check score for each review text&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Textatistic</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="s1">&#39;flesch_score&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span></div>
+
+
+<span class="n">analyser</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="SentimentIntensityScore"><a class="viewcode-back" href="../code.html#score.SentimentIntensityScore">[docs]</a><span class="k">def</span> <span class="nf">SentimentIntensityScore</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate sentiment score for each review comment&quot;&quot;&quot;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">analyser</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">score</span><span class="p">[</span><span class="s1">&#39;compound&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">df_listing</span><span class="p">,</span> <span class="n">df_reviews</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">()</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">cancel_flag</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">length</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">sentiment_score</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_listing</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="num_items"><a class="viewcode-back" href="../code.html#score.num_items">[docs]</a><span class="k">def</span> <span class="nf">num_items</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the number of the items listed in a string&quot;&quot;&quot;</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span>
+               <span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;host_verification_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="sentiment_score_category"><a class="viewcode-back" href="../code.html#score.sentiment_score_category">[docs]</a><span class="k">def</span> <span class="nf">sentiment_score_category</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Divide the sentiment score in different categories based on the value&quot;&quot;&quot;</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_reviews_new</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.50</span><span class="p">,</span> <span class="s1">&#39;negative_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;negative_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;negative_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.50</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.60</span><span class="p">),</span>
+           <span class="s1">&#39;neutral_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;neutral_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;neutral_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.60</span><span class="p">,</span> <span class="s1">&#39;positive_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;comments&#39;</span><span class="p">]))):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;comments&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">clean_x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text_score</span><span class="p">(</span><span class="n">clean_x</span><span class="p">))</span>
+        <span class="n">length</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)))</span>
+        <span class="n">sentiment_score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SentimentIntensityScore</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s1">&#39;cancel&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">cancel_flag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cancel_flag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">length</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">cancel_flag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">sentiment_score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;cancel_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cancel_flag</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;num_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sentiment_score</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]))</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;perc_scores&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;perc_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;cancel_flag&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;perc_sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;reviewer_num_reviews&#39;</span><span class="p">]</span> \
+    <span class="o">=</span> <span class="n">df_reviews</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;reviewer_id&#39;</span><span class="p">)[</span><span class="s1">&#39;reviewer_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+<span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;reviewer_overall_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="p">[</span><span class="s1">&#39;reviewer_num_reviews&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">gp</span> <span class="o">=</span> <span class="n">df_reviews</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;reviewer_id&#39;</span><span class="p">,</span> <span class="s1">&#39;listing_id&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span>\
+    <span class="n">agg</span><span class="p">({</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span>
+<span class="n">df_reviews_new</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_reviews</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reviewer_id&#39;</span><span class="p">,</span> <span class="s1">&#39;listing_id&#39;</span><span class="p">])</span><span class="o">.</span>\
+    <span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;comments_x&#39;</span><span class="p">:</span> <span class="s1">&#39;count_reviews&#39;</span><span class="p">})</span>
+<span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;count_reviews_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;count_reviews&#39;</span><span class="p">]</span><span class="o">.</span>\
+    <span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_reviews_new</span><span class="p">[</span><span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;count_reviews&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">[[</span><span class="s1">&#39;count_reviews_score&#39;</span><span class="p">,</span> <span class="s1">&#39;count_reviews&#39;</span><span class="p">]]</span>
+<span class="n">gp1</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;listing_id&#39;</span><span class="p">],</span>
+                             <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span>
+<span class="n">gp1</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;review_count&#39;</span><span class="p">})</span>
+<span class="n">df_reviews_new</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_reviews_new</span><span class="p">,</span>
+                           <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">])</span>
+<span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;listing_review_count&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;review_count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Add all the fields for review to get the overall score</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_overall_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_accuracy&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_rating&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_cleanliness&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_checkin&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_communication&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_location&#39;</span><span class="p">]</span> \
+    <span class="o">+</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;review_scores_value&#39;</span><span class="p">]</span>
+
+<span class="n">df_listing</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;listing_id&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m1</span> <span class="o">=</span> <span class="n">df_listing</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;review_overall_score&#39;</span><span class="p">]]</span>
+<span class="n">df_reviews_new</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span>
+<span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;overall_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;review_overall_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Host values</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_license_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_license_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;license&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_license_flag&#39;</span><span class="p">])</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_identity_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_identity_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_identity_verified&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_identity_flag&#39;</span><span class="p">])</span>
+
+<span class="n">df_listing</span> <span class="o">=</span> <span class="n">num_items</span><span class="p">(</span><span class="n">df_listing</span><span class="p">,</span> <span class="s1">&#39;host_verifications&#39;</span><span class="p">)</span>
+<span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_v_list_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_listing</span><span class="p">[</span><span class="s1">&#39;host_verification_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="n">df_listing</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;host_v_list_pt&#39;</span><span class="p">,</span> <span class="s1">&#39;host_identity_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;host_license_flag&#39;</span><span class="p">]]</span>
+<span class="n">df_reviews_new</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">m2</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span>
+<span class="n">df_lid</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;overall_score&#39;</span><span class="p">,</span> <span class="s1">&#39;listing_review_count&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;perc_scores&#39;</span><span class="p">,</span> <span class="s1">&#39;perc_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;perc_sentiment_score&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;count_reviews_score&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;reviewer_overall_count&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;host_v_list_pt&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;host_identity_flag&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;host_license_flag&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;cancel_flag&#39;</span><span class="p">]]</span>
+
+<span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;total_overall_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;overall_score&#39;</span><span class="p">]</span> <span class="o">+</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;listing_review_count&#39;</span><span class="p">]</span>
+<span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;total_review_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;perc_scores&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;perc_sentiment_score&#39;</span><span class="p">]</span>
+<span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;total_reviewer_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;count_reviews_score&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;reviewer_overall_count&#39;</span><span class="p">]</span>
+<span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;total_host_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;host_v_list_pt&#39;</span><span class="p">]</span> <span class="o">+</span> \
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;host_identity_flag&#39;</span><span class="p">]</span> <span class="o">+</span>\
+    <span class="n">df_lid</span><span class="p">[</span><span class="s1">&#39;host_license_flag&#39;</span><span class="p">]</span>
+<span class="n">df_final</span> <span class="o">=</span> \
+    <span class="n">df_lid</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;total_overall_score&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;total_review_score&#39;</span><span class="p">,</span> <span class="s1">&#39;total_reviewer_score&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;total_host_score&#39;</span><span class="p">,</span> <span class="s1">&#39;cancel_flag&#39;</span><span class="p">]]</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;total_overall_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;total_review_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;total_reviewer_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;total_host_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">df_final1</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;overall_score_pt&#39;</span><span class="p">,</span> <span class="s1">&#39;review_score_pt&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">,</span> <span class="s1">&#39;host_score_pt&#39;</span><span class="p">,</span> <span class="s1">&#39;cancel_flag&#39;</span><span class="p">]]</span>
+
+<span class="n">group</span> <span class="o">=</span> <span class="n">df_final1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">group</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;cancel_flag&#39;</span><span class="p">]]</span>
+<span class="n">df_final1</span> <span class="o">=</span> <span class="n">df_final1</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span>
+<span class="n">df_final1</span> <span class="o">=</span> <span class="n">df_final1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cancel_flag_x&#39;</span><span class="p">])</span>
+<span class="n">df_final1</span> <span class="o">=</span> <span class="n">df_final1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cancel_flag_y&#39;</span><span class="p">:</span> <span class="s1">&#39;cancel_flag&#39;</span><span class="p">})</span>
+<span class="n">final</span> <span class="o">=</span> <span class="n">df_final1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+
+<span class="n">q_low_reviewer</span> <span class="o">=</span> <span class="n">final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">suspicious_reviewers</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="n">final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span> <span class="o">&lt;</span>
+          <span class="n">q_low_reviewer</span><span class="p">][</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;suspicious_reviewer&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">final</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span>
+             <span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suspicious_reviewers</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="s1">&#39;host_score_pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final</span><span class="p">[</span><span class="s1">&#39;cancel_flag&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">final</span><span class="p">[</span><span class="s1">&#39;cancel_flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Add details for sentiment score</span>
+<span class="n">df_reviews_new</span> <span class="o">=</span> <span class="n">sentiment_score_category</span><span class="p">(</span><span class="n">df_reviews_new</span><span class="p">,</span> <span class="s1">&#39;sentiment_score&#39;</span><span class="p">)</span>
+<span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;positive_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;positive_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;sentiment_score&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;positive_review&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;neutral_review&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;negative_review&#39;</span><span class="p">]]</span>
+<span class="n">group2</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+<span class="n">final_1</span> <span class="o">=</span> <span class="n">final</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">group2</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span>
+<span class="n">final_1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;positive_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;positive_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;negative_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;negative_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;neutral_review&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;neutral_review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Make monthwise data</span>
+<span class="n">df_final1_copy</span> <span class="o">=</span> <span class="n">df_final1</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_reviews_new</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;total_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">]</span> <span class="o">+</span> \
+    <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;review_score_pt&#39;</span><span class="p">]</span> <span class="o">+</span> \
+    <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">]</span>
+<span class="n">df_final1_copy</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;overall_score_pt&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;review_score_pt&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;reviewer_score_pt&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;host_score_pt&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;cancel_flag&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;sentiment_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;month_year&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_final1_copy</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+<span class="n">df_final1_copy</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m3</span> <span class="o">=</span> <span class="n">df_listing</span><span class="p">[[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="s1">&#39;availability_30&#39;</span><span class="p">]]</span>
+<span class="n">df_final2</span> <span class="o">=</span> <span class="n">df_final1_copy</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">m3</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span>
+<span class="n">df_final2</span> <span class="o">=</span> <span class="n">df_final2</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;month_year&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">df_final2_new</span> <span class="o">=</span> <span class="n">df_final2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;listing_id&#39;</span><span class="p">)</span><span class="o">.</span>\
+    <span class="n">head</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">gg</span> <span class="o">=</span> <span class="n">df_final2_new</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;listing_id&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">listing_id_final</span> <span class="o">=</span> <span class="n">gg</span><span class="p">[</span><span class="n">gg</span><span class="p">[</span><span class="s1">&#39;month_year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">][</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span>
+<span class="n">df_final2_new1</span> <span class="o">=</span> \
+    <span class="n">df_final2_new</span><span class="p">[</span><span class="n">df_final2_new</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">listing_id_final</span><span class="p">)]</span>
+<span class="n">date</span> <span class="o">=</span> <span class="n">df_final2_new1</span><span class="p">[</span><span class="s1">&#39;month_year&#39;</span><span class="p">]</span>
+<span class="n">df_final2_new1</span> <span class="o">=</span> <span class="n">df_final2_new1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_final2_new1</span><span class="p">[</span><span class="s1">&#39;month_year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date</span>
+<span class="n">final_2</span> <span class="o">=</span> <span class="n">final_1</span><span class="p">[</span><span class="n">final_1</span><span class="p">[</span><span class="s1">&#39;listing_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">listing_id_final</span><span class="p">)]</span>
+
+<span class="c1"># Convert to csv</span>
+<span class="n">final_2</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;listing_score1.csv&#39;</span><span class="p">)</span>
+<span class="n">df_final2_new1</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;monthly_score1.csv&#39;</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">My Code Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Required Modules</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Audrey Barszcz, Hashneet Kaur, Sandhya Kiran, Jordan Uyeki, Kaiqi Guo, Shruti Roy, Vaishnavi Kashyap, Phillip Navo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
