@@ -5,6 +5,7 @@ from sqlalchemy.orm import load_only
 
 from app import classes
 
+
 def map_html(max_listing):
     """
     Create HTML for map displaying reliability of current listings.
@@ -13,7 +14,7 @@ def map_html(max_listing):
     ---------
     max_listings: int
         - limits the number of listings to display.
-    
+
     Returns
     -------
     map_html
@@ -49,7 +50,7 @@ def map_html(max_listing):
             color=color_hex,
             fill_color=color_hex,
             fill_opacity=1,
-            tooltip = "Click for more"
+            tooltip="Click for more"
         ).add_to(map)
 
     return map._repr_html_()

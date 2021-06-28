@@ -7,6 +7,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import warnings
 warnings.filterwarnings("ignore")
 
+
 def read_files():
     """Read the data into dataframes"""
     reviews = pd.read_pickle('reviews.pkl')
@@ -15,12 +16,15 @@ def read_files():
     df_reviews = reviews[reviews['listing_id'].isin(listing['id'])]
     return df_listing, df_reviews
 
+
 def text_score(x):
     """Check score for each review text"""
     try:
         return Textatistic(x).scores['flesch_score']
-    except:
+    except ZeroDivisionError:
         return np.NaN
+
+
 analyser = SentimentIntensityAnalyzer()
 
 
@@ -29,32 +33,33 @@ def SentimentIntensityScore(sentence):
     score = analyser.polarity_scores(sentence)
     return score['compound']
 
+
 df_listing, df_reviews = read_files()
 scores = []
 cancel_flag = []
 length = []
 sentiment_score = []
 print(df_listing)
-def num_items(df,col_name):
+
+
+def num_items(df, col_name):
     """Get the number of the items listed in a string"""
     num = [len(i.replace('[', '').replace(']', '').
-                  replace("'", '').split(',')) for i in
-              df[col_name]]
+               replace("'", '').split(',')) for i in df[col_name]]
     df['host_verification_list'] = num
     return df
 
+
 def sentiment_score_category(df, col_name):
     """Divide the sentiment score in different categories based on the value"""
-    df.loc[df_reviews_new[col_name] <
-                       0.50, 'negative_review'] = 1
+    df.loc[df_reviews_new[col_name] < 0.50, 'negative_review'] = 1
     df['negative_review'] = df['negative_review'].fillna(0)
-    df.loc[(df[col_name] <= 0.50) &
-                       (df[col_name] <= 0.60),
-                       'neutral_review'] = 1
+    df.loc[(df[col_name] <= 0.50) & (df[col_name] <= 0.60),
+           'neutral_review'] = 1
     df['neutral_review'] = df['neutral_review'].fillna(0)
-    df.loc[df[col_name] >
-                       0.60, 'positive_review'] = 1
+    df.loc[df[col_name] > 0.60, 'positive_review'] = 1
     return df
+
 
 for i in tqdm(range(len(df_reviews['comments']))):
     x = df_reviews['comments'][i]
@@ -131,7 +136,7 @@ df_listing['host_identity_flag'] = np.where(
     df_listing['host_identity_verified'] == 't',
     1, df_listing['host_identity_flag'])
 
-df_listing = num_items(df_listing,'host_verifications')
+df_listing = num_items(df_listing, 'host_verifications')
 df_listing['host_v_list_pt'] = \
     df_listing['host_verification_list'].rank(pct=True)
 m2 = df_listing[['listing_id',
@@ -209,7 +214,7 @@ final['cancel_flag'] = \
     final['cancel_flag'].astype(int)
 
 # Add details for sentiment score
-df_reviews_new = sentiment_score_category(df_reviews_new,'sentiment_score')
+df_reviews_new = sentiment_score_category(df_reviews_new, 'sentiment_score')
 df_reviews_new['positive_review'] = df_reviews_new['positive_review'].fillna(0)
 df1 = df_reviews_new[['listing_id',
                       'sentiment_score',

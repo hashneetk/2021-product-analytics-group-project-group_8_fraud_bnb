@@ -34,5 +34,7 @@ def test_listing_id_data():
     corresponding Listing Value 13776
     is correct
     """
-    assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_host_cancellations == 0
-    assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_fraud_reviewers == 4
+    assert classes.CurrentScore.query.filter_by(listing_id=13776)\
+           .first().num_host_cancellations == 0
+    assert classes.CurrentScore.query.filter_by(listing_id=13776)\
+           .first().num_fraud_reviewers == 4
