@@ -2,7 +2,7 @@ from app import classes
 from app import db
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
-
+import score.py
 
 def UserFromDB(username):
     user = classes.User.query.filter_by(username=username).first()
@@ -36,3 +36,11 @@ def test_listing_id_data():
     """
     assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_host_cancellations == 0
     assert classes.CurrentScore.query.filter_by(listing_id=13776).first().num_fraud_reviewers == 4
+
+def test_num_items():
+    """Check the num_items code to see the
+    number of items in the string"""
+    df = pd.DataFrame(columns=['test'])
+    df = pd.DataFrame(np.array(["['a','b','c']"]), columns=df.columns)
+    a = num_items(df['test'])
+    assert [3] == a
