@@ -5,4 +5,4 @@ The goal of this project is to design an algorithm to assign a reliability score
 
 We created a full-stack solution from front-end to the database and ML model. Different tools and technologies used are Docker, AWS(S3,EC2 and Beanstalk), Flask, Python, Javascript and Bootstrap. 
 
-The product demo can been here- [FraudBnb] (https://lnkd.in/g69cdvk)
+The product demo can be seen here- [FraudBnb] (https://lnkd.in/g69cdvk)
